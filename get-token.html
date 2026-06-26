@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>云掌柜Token提取工具</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f7fa; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: white; border-radius: 16px; padding: 40px; max-width: 520px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+h1 { font-size: 22px; margin-bottom: 8px; color: #1a1a1a; }
+.subtitle { color: #888; font-size: 14px; margin-bottom: 28px; }
+.step { background: #f8f9fb; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; }
+.step-num { background: #4f6ef7; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0; }
+.step-text { font-size: 14px; line-height: 1.6; color: #333; }
+.step-text b { color: #4f6ef7; }
+.divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
+.bookmarklet-area { text-align: center; }
+.bookmarklet-area p { font-size: 13px; color: #888; margin-bottom: 14px; }
+.bookmarklet-link { display: inline-block; background: linear-gradient(135deg, #4f6ef7, #6c5ce7); color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-size: 16px; font-weight: bold; cursor: grab; box-shadow: 0 4px 12px rgba(79,110,247,0.3); transition: transform 0.2s, box-shadow 0.2s; }
+.bookmarklet-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(79,110,247,0.4); }
+.or-divider { text-align: center; color: #bbb; font-size: 13px; margin: 20px 0; position: relative; }
+.or-divider::before, .or-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #eee; }
+.or-divider::before { left: 0; }
+.or-divider::after { right: 0; }
+.manual-area { text-align: center; }
+.manual-area p { font-size: 13px; color: #888; margin-bottom: 10px; }
+.code-box { background: #1e1e2e; color: #a6e3a1; padding: 14px 18px; border-radius: 8px; font-family: Consolas, monospace; font-size: 13px; text-align: left; word-break: break-all; user-select: all; cursor: text; margin: 8px 0 12px; }
+.hint { font-size: 12px; color: #f97316; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔑 云掌柜 Token 提取</h1>
+  <p class="subtitle">提取登录凭证，用于看板实时数据对接</p>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">先在浏览器打开 <b>v2.yunzhanggui.net</b>，用你的账号<b>登录云掌柜</b></div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">登录成功后，<b>把下面的蓝色按钮拖到书签栏</b>（就是浏览器地址栏下面那一排）</div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">在云掌柜页面上<b>点击刚拖进去的书签</b>，会弹出一个框，把内容<b>复制发给小行</b></div>
+  </div>
+
+  <hr class="divider">
+  <div class="bookmarklet-area">
+    <p>👇 按住拖到书签栏</p>
+    <a class="bookmarklet-link" href="javascript:void(prompt('%E8%AF%B7%E5%A4%8D%E5%88%B6%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%86%85%E5%AE%B9%E5%8F%91%E7%BB%99%E5%B0%8F%E8%A1%8C',localStorage.getItem('userLogin')))">🔑 提取Token</a>
+  </div>
+
+  <div class="or-divider">或者</div>
+
+  <div class="manual-area">
+    <p>登录云掌柜后，在<b>地址栏</b>输入以下内容然后回车：</p>
+    <div class="code-box">javascript:void(prompt('',localStorage.getItem('userLogin')))</div>
+    <p class="hint">⚠️ 注意：需要在 javascript 前面手动敲字输入，直接粘贴可能被浏览器拦截</p>
+  </div>
+</div>
+</body>
+</html>
