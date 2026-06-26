@@ -234,7 +234,7 @@ async function loadData() {
   const name = getStoreName();
   if (!name) { document.getElementById('storeTitle').textContent = '缺少门店参数'; return; }
   try {
-    const r = await fetch('data.json');
+    const r = await fetch('data.json?t=' + Date.now());
     D = await r.json();
     // Find bi_name
     const matched = (D.storeMatrix || []).find(s => displayName(s.bi_name) === name);
@@ -596,6 +596,7 @@ function renderAdvice() {
 
 window.addEventListener('resize', () => { Object.values(charts).forEach(c => c && c.resize()); });
 loadData();
+setInterval(loadData, 10 * 60 * 1000); // 每10分钟自动刷新
 </script>
 </body>
 </html>
