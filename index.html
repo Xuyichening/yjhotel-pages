@@ -75,7 +75,7 @@ let D = null; // raw dashboard data
 
 async function loadData() {
   try {
-    const r = await fetch('data.json');
+    const r = await fetch('data.json?t=' + Date.now());
     D = await r.json();
     renderAll();
   } catch(e) {
@@ -160,6 +160,7 @@ function renderTrend() {
 }
 
 loadData();
+setInterval(loadData, 10 * 60 * 1000); // 每10分钟自动刷新
 </script>
 </body>
 </html>
