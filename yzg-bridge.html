@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>云掌柜数据桥 - 扬际酒店看板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#eee;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:20px}
+h1{font-size:20px;margin-bottom:15px;color:#0ff}
+.card{background:#16213e;border-radius:10px;padding:18px;margin-bottom:15px}
+.card h2{font-size:15px;color:#0ff;margin-bottom:10px}
+.log{background:#0f0f23;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;max-height:300px;overflow-y:auto;line-height:1.6;white-space:pre-wrap}
+.log .ok{color:#0f0}
+.log .err{color:#f44}
+.log .info{color:#0af}
+.log .warn{color:#fa0}
+.stats{display:flex;gap:15px;flex-wrap:wrap}
+.stat{text-align:center;min-width:80px}
+.stat .val{font-size:22px;font-weight:bold;color:#0ff}
+.stat .lbl{font-size:11px;color:#888;margin-top:2px}
+button{background:#0af;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:14px;cursor:pointer;margin-right:10px;margin-top:8px}
+button:hover{background:#08d}
+button:disabled{background:#555;cursor:not-allowed}
+.tip{font-size:12px;color:#fa0;margin-top:10px;line-height:1.6}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:bold;margin-left:6px}
+.tag.ok{background:#040;color:#0f0}
+.tag.err{background:#400;color:#f44}
+.tag.run{background:#044;color:#0ff}
+</style>
+</head>
+<body>
+<h1>🌉 云掌柜数据桥 → 扬际酒店看板</h1>
+
+<div class="card">
+  <h2>运行状态 <span id="statusTag" class="tag">待启动</span></h2>
+  <div class="stats">
+    <div class="stat"><div class="val" id="sStores">-</div><div class="lbl">门店数</div></div>
+    <div class="stat"><div class="val" id="sRooms">-</div><div class="lbl">总房量</div></div>
+    <div class="stat"><div class="val" id="sOcc">-</div><div class="lbl">入住率</div></div>
+    <div class="stat"><div class="val" id="sRev">-</div><div class="lbl">营收(万)</div></div>
+    <div class="stat"><div class="val" id="sPush">-</div><div class="lbl">推送次数</div></div>
+  </div>
+  <div style="margin-top:12px">
+    <button id="btnStart" onclick="startBridge()">启动数据桥</button>
+    <button id="btnStop" onclick="stopBridge()" disabled>停止</button>
+    <button onclick="runOnce()">立即执行一次</button>
+  </div>
+  <div style="margin-top:8px">
+      <label style="font-size:12px;color:#888">GitHub Token: </label>
+      <input id="ghTokenInput" type="password" placeholder="ghp_..." style="background:#0f0f23;border:1px solid #333;color:#eee;padding:5px 10px;border-radius:4px;width:250px;font-size:12px">
+      <button onclick="saveGHToken()" style="padding:5px 12px;font-size:12px;margin-left:5px">保存</button>
+    </div>
+    <div class="tip">⚠️ 使用前请确保已在同浏览器登录 v2.yunzhanggui.net，本页面会自动获取登录态</div>
+</div>
+
+<div class="card">
+  <h2>执行日志</h2>
+  <div class="log" id="logBox">等待启动...</div>
+</div>
+
+<script>
+// ===== 配置 =====
+function saveGHToken() {
+  const t = document.getElementById('ghTokenInput').value.trim();
+  if (t) { localStorage.setItem('yzg_gh_token', t); alert('Token已保存'); }
+}
+function getGHToken() { return localStorage.getItem('yzg_gh_token') || ''; }
+const GH_REPO = 'Xuyichening/yjhotel-pages';
+const API_BASE = 'https://api.yunzhanggui.net';
+const INTERVAL_MS = 10 * 60 * 1000; // 10分钟
+
+const NAME_MAP = {'白象街5店': '白象街旗舰店'};
+const REGION_MAP = {
+  '访酒店':'重庆','扬际创汇店':'重庆','予鹿店':'重庆','白鹿店':'重庆',
+  '珠江店':'重庆','重庆公馆店':'重庆',
+  '白象街1店':'重庆','白象街2店':'重庆','白象街3店':'重庆','白象街4店':'重庆','白象街5店':'重庆',
+  '富银店':'珠海','美盈店':'珠海','阳朔店':'桂林'
+};
+const TYPE_MAP = {
+  '访酒店':'公寓','扬际创汇店':'公寓','予鹿店':'民宿','白鹿店':'民宿',
+  '珠江店':'民宿','重庆公馆店':'公寓',
+  '白象街1店':'民宿','白象街2店':'民宿','白象街3店':'民宿','白象街4店':'民宿','白象街5店':'民宿',
+  '富银店':'公寓','美盈店':'公寓','阳朔店':'民宿'
+};
+
+function displayName(n) { return NAME_MAP[n] || n; }
+
+let timer = null;
+let pushCount = 0;
+
+// ===== 日志 =====
+function log(msg, cls='info') {
+  const box = document.getElementById('logBox');
+  const t = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+  box.innerHTML += `<span class="${cls}">[${t}] ${msg}</span>\n`;
+  box.scrollTop = box.scrollHeight;
+}
+
+// ===== 获取认证Token =====
+function getAuth() {
+  // 尝试从 localStorage 读取 userLogin
+  try {
+    const raw = localStorage.getItem('userLogin');
+    if (raw) {
+      const token = JSON.parse(raw);
+      if (token && token.length > 10) {
+        log('从 localStorage 获取到 Token ✓', 'ok');
+        return token;
+      }
+    }
+  } catch(e) {}
+  // 尝试从 cookie 读取
+  try {
+    const cookies = document.cookie.split(';');
+    for (const c of cookies) {
+      const [k,v] = c.trim().split('=');
+      if (k === 'userLogin' && v && v.length > 10) {
+        log('从 Cookie 获取到 Token ✓', 'ok');
+        return v;
+      }
+    }
+  } catch(e) {}
+  return null;
+}
+
+// ===== API 请求 =====
+async function apiGet(path, params={}) {
+  const auth = getAuth();
+  if (!auth) throw new Error('未获取到登录Token，请先登录云掌柜');
+  
+  const url = new URL(API_BASE + path);
+  url.searchParams.set('version', '14.4.2');
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  
+  const r = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Authorization': auth,
+      'Content-Type': 'application/json;charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest',
+      'ua': 'web',
+      'timestamp': Date.now().toString()
+    }
+  });
+  const data = await r.json();
+  if (data.ret_code === 101) throw new Error('登录已过期，请重新登录云掌柜');
+  if (data.ret_code !== 0) throw new Error(`API错误 ${path}: ret_code=${data.ret_code} ${data.ret_msg}`);
+  return data.ret_data;
+}
+
+// ===== 构建看板数据 =====
+async function buildDashboardData() {
+  log('开始从云掌柜API获取实时数据...');
+  
+  const today = new Date();
+  const todayStr = formatDate(today);
+  const todayYMD = todayStr.replace(/-/g,'');
+  
+  // 1. 获取门店列表
+  const innList = await apiGet('/api/v1/inn/get_inn_list');
+  const inns = innList && innList.list ? innList.list : (Array.isArray(innList) ? innList : []);
+  log(`获取到 ${inns.length} 家门店`);
+  
+  // 2. 获取首页概览数据
+  let roomStayData = null, revenueData = null, orderData = null, sellRateData = null;
+  
+  try {
+    roomStayData = await apiGet('/api/v1/home_page/get_room_stay_overview');
+    log('入住概览 ✓', 'ok');
+  } catch(e) { log('入住概览获取失败: ' + e.message, 'warn'); }
+  
+  try {
+    revenueData = await apiGet('/api/v1/home_page/get_room_revenue');
+    log('营收概览 ✓', 'ok');
+  } catch(e) { log('营收概览获取失败: ' + e.message, 'warn'); }
+  
+  try {
+    orderData = await apiGet('/api/v1/home_page/get_today_order_overview');
+    log('订单概览 ✓', 'ok');
+  } catch(e) { log('订单概览获取失败: ' + e.message, 'warn'); }
+  
+  try {
+    sellRateData = await apiGet('/api/v1/home_page/get_sell_rate');
+    log('售出率 ✓', 'ok');
+  } catch(e) { log('售出率获取失败: ' + e.message, 'warn'); }
+  
+  // 3. 构建门店矩阵
+  const storeMatrix = [];
+  const storeRoomDetails = {};
+  const storeNames = [];
+  let totalRooms = 0, totalOccupied = 0, totalRevenue = 0;
+  
+  for (const inn of inns) {
+    const innName = inn.inn_name || inn.name || '';
+    const innid = inn.innid || inn.id || '';
+    const dispName = displayName(innName);
+    const region = REGION_MAP[innName] || '其他';
+    const type = TYPE_MAP[innName] || '民宿';
+    
+    // 从概览数据中提取当前门店
+    let day0_total = 0, day0_sold = 0, day0_available = 0, day0_occ = 0;
+    let day0_revenue = 0, day0_sold_avg = 0, day0_avail_avg = 0;
+    let day1_total = 0, day1_sold = 0, day1_available = 0, day1_occ = 0, day1_revenue = 0, day1_sold_avg = 0;
+    let day2_total = 0, day2_sold = 0, day2_available = 0, day2_occ = 0, day2_revenue = 0, day2_sold_avg = 0;
+    let day3_total = 0, day3_sold = 0, day3_available = 0, day3_occ = 0, day3_revenue = 0, day3_sold_avg = 0;
+    
+    // Try to get per-inn data from room_stay_overview
+    if (roomStayData) {
+      // The structure might be {list: [{innid, inn_name, ...}]} or similar
+      const innData = findInnData(roomStayData, innid, innName);
+      if (innData) {
+        day0_total = innData.total_rooms || innData.room_count || 0;
+        day0_sold = innData.sold_rooms || innData.checkin_count || innData.occupancy_count || 0;
+        day0_available = innData.available_rooms || (day0_total - day0_sold) || 0;
+        day0_occ = day0_total > 0 ? Math.round(day0_sold / day0_total * 1000) / 10 : 0;
+        
+        // Future days
+        if (innData.future_data) {
+          const fd = innData.future_data;
+          for (let d = 1; d <= 3; d++) {
+            const key = `day${d}`;
+            if (fd[key]) {
+              ['total','sold','available','occ','revenue','sold_avg'].forEach(f => {
+                 eval(`day${d}_${f} = fd[key].${f} || 0`);
+            });
+            }
+          }
+        }
+      }
+    }
+    
+    // Try revenue data
+    if (revenueData) {
+      const revInn = findInnData(revenueData, innid, innName);
+      if (revInn) {
+        day0_revenue = revInn.revenue || revInn.room_revenue || 0;
+        day0_sold_avg = day0_sold > 0 ? Math.round(day0_revenue / day0_sold) : 0;
+        if (revInn.future_revenue) {
+          for (let d = 1; d <= 3; d++) {
+            if (revInn.future_revenue[`day${d}`]) {
+              eval(`day${d}_revenue = revInn.future_revenue.day${d}.revenue || 0`);
+              eval(`day${d}_sold_avg = eval('day${d}_sold') > 0 ? Math.round(eval('day${d}_revenue') / eval('day${d}_sold')) : 0`);
+            }
+          }
+        }
+      }
+    }
+    
+    // Try sell rate data for future occupancy
+    if (sellRateData) {
+      const srInn = findInnData(sellRateData, innid, innName);
+      if (srInn && srInn.future_rates) {
+        for (let d = 1; d <= 3; d++) {
+          if (srInn.future_rates[`day${d}`]) {
+            const fr = srInn.future_rates[`day${d}`];
+            eval(`day${d}_total = fr.total || eval('day${d}_total') || day0_total`);
+            eval(`day${d}_sold = fr.sold || eval('day${d}_sold') || 0`);
+            eval(`day${d}_available = fr.available || eval('day${d}_available') || 0`);
+            eval(`day${d}_occ = eval('day${d}_total') > 0 ? Math.round(eval('day${d}_sold') / eval('day${d}_total') * 1000) / 10 : 0`);
+          }
+        }
+      }
+    }
+    
+    // Fallback: if no API data per inn, try getting room status
+    if (day0_total === 0 && innid) {
+      try {
+        const roomStatus = await apiGet('/api/v1/room/get_book_all_room_status', { innid: String(innid) });
+        if (roomStatus) {
+          const rooms = roomStatus.list || roomStatus.rooms || (Array.isArray(roomStatus) ? roomStatus : []);
+          day0_total = rooms.length;
+          day0_sold = rooms.filter(r => r.status === 'OD' || r.status === 'OC' || r.status === 'I').length;
+          day0_available = rooms.filter(r => r.status === 'VC' || r.status === 'VD').length;
+          day0_occ = day0_total > 0 ? Math.round(day0_sold / day0_total * 1000) / 10 : 0;
+        }
+      } catch(e) { /* skip */ }
+    }
+    
+    // Set day totals from current if not available
+    day1_total = day1_total || day0_total;
+    day2_total = day2_total || day0_total;
+    day3_total = day3_total || day0_total;
+    
+    totalRooms += day0_total;
+    totalOccupied += day0_sold;
+    totalRevenue += day0_revenue;
+    
+    const storeData = {
+      bi_name: innName,
+      type, region,
+      day0_occ, day0_revenue, day0_sold_avg, day0_avail_avg: day0_available > 0 ? Math.round(day0_revenue / day0_available) : 0,
+      day0_total, day0_sold, day0_available,
+      day1_occ, day1_revenue, day1_sold_avg, day1_avail_avg: 0, day1_total, day1_sold, day1_available,
+      day2_occ, day2_revenue, day2_sold_avg, day2_avail_avg: 0, day2_total, day2_sold, day2_available,
+      day3_occ, day3_revenue, day3_sold_avg, day3_avail_avg: 0, day3_total, day3_sold, day3_available,
+      day0_sold_delta: 0, day0_revenue_delta: 0
+    };
+    
+    storeMatrix.push(storeData);
+    storeNames.push(innName);
+    storeRoomDetails[innName] = [];
+  }
+  
+  // 4. 获取在住/订单动态
+  const recentOrders = [];
+  try {
+    // Get today's orders
+    for (const inn of inns) {
+      const innid = String(inn.innid || inn.id || '');
+      const innName = inn.inn_name || inn.name || '';
+      if (!innid) continue;
+      try {
+        const orders = await apiGet('/api/v1/order/list_room_status', { innid, begin_time: todayStr + ' 00:00:00', end_time: todayStr + ' 23:59:59' });
+        const list = orders && orders.list ? orders.list : (Array.isArray(orders) ? orders : []);
+        list.forEach(o => {
+          recentOrders.push({
+            book_at: o.create_time || o.order_time || '',
+            store: innName,
+            region: REGION_MAP[innName] || '其他',
+            channel: o.channel_name || o.channel || '',
+            room_type: o.room_type_name || '',
+            room_fee: o.room_price || o.actual_price || '',
+            nights: o.nights || 1,
+            order_status: o.status === 'checkin' ? 'checkin' : o.status === 'checkout' ? 'checkout' : 'reserved'
+          });
+        });
+      } catch(e) { /* skip per-inn */ }
+    }
+    log(`获取到 ${recentOrders.length} 条订单动态`, 'ok');
+  } catch(e) { log('订单动态获取失败: ' + e.message, 'warn'); }
+  
+  // 5. 构建区域汇总
+  const regionSummary = {};
+  storeMatrix.forEach(s => {
+    if (!regionSummary[s.region]) {
+      regionSummary[s.region] = { rooms: 0, sold: 0, revenue: 0, sold_with_price: 0, sold_avgs: [], stores: [] };
+    }
+    const r = regionSummary[s.region];
+    r.rooms += s.day0_total;
+    r.sold += s.day0_sold;
+    r.revenue += s.day0_revenue;
+    if (s.day0_sold_avg > 0) { r.sold_with_price += s.day0_sold; r.sold_avgs.push(s.day0_sold_avg); }
+    r.stores.push(s.bi_name);
+  });
+  // Calc avg price per region
+  Object.values(regionSummary).forEach(r => {
+    if (r.sold_avgs.length > 0) {
+      r.sold_avgs = [Math.round(r.sold_avgs.reduce((a,b)=>a+b,0) / r.sold_avgs.length)];
+    }
+  });
+  
+  // 6. 构建趋势数据 (4天)
+  const focusDates = [], focusLabels = [], focusWeekdays = [];
+  const weekNames = ['日','一','二','三','四','五','六'];
+  for (let d = 0; d <= 3; d++) {
+    const fd = new Date(today.getTime() + d * 86400000);
+    focusDates.push(formatDate(fd).replace(/-/g,''));
+    focusLabels.push(d === 0 ? '今天' : d === 1 ? '明天' : d === 2 ? '后天' : '大后天');
+    focusWeekdays.push(weekNames[fd.getDay()]);
+  }
+  
+  // Group occupancy & avg price
+  const groupOccupancy = totalRooms > 0 ? Math.round(totalOccupied / totalRooms * 1000) / 10 : 0;
+  const groupAvgPrice = totalOccupied > 0 ? Math.round(totalRevenue / totalOccupied) : 0;
+  
+  // Trend rates (4 days)
+  const trendDates = focusDates.map((d,i) => focusLabels[i] + '\n' + d.slice(4,6) + '-' + d.slice(6,8));
+  const trendRates = [];
+  for (let d = 0; d <= 3; d++) {
+    const daySold = storeMatrix.reduce((sum, s) => sum + (s[`day${d}_sold`] || 0), 0);
+    const dayTotal = storeMatrix.reduce((sum, s) => sum + (s[`day${d}_total`] || 0), 0);
+    trendRates.push(dayTotal > 0 ? Math.round(daySold / dayTotal * 1000) / 10 : 0);
+  }
+  
+  // 7. Assemble D object (compatible with existing dashboard)
+  const D = {
+    collectTime: new Date().toLocaleTimeString('zh-CN', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'}),
+    today: todayYMD,
+    focusDates, focusLabels, focusWeekdays,
+    lastWeekDates: [], lastWeekLabels: [], hasHistory: false,
+    lastYearDates: [], lastYearWeekdays: [], hasLastYear: false,
+    groupOccupancy, groupAvgPrice,
+    totalRooms, totalOccupied, totalRevenue,
+    trendDates, trendRates,
+    regionSummary,
+    storeMatrix,
+    storeRoomDetails,
+    revenueAdvice: '',
+    storeNames,
+    nextUpdate: '10分钟后',
+    cqRoomSummary: null,
+    ctripCompetitors: [],
+    bookingAlerts: [],
+    recentOrders,
+    bookingCycleData: null,
+    _snapshotSource: 'yunzhanggui-api-direct',
+    _snapshotTime: new Date().toISOString()
+  };
+  
+  // Update UI stats
+  document.getElementById('sStores').textContent = inns.length;
+  document.getElementById('sRooms').textContent = totalRooms;
+  document.getElementById('sOcc').textContent = groupOccupancy + '%';
+  document.getElementById('sRev').textContent = (totalRevenue / 10000).toFixed(1);
+  
+  log(`数据构建完成: ${inns.length}家门店, ${totalRooms}间, 入住率${groupOccupancy}%, 营收¥${totalRevenue.toFixed(0)}`, 'ok');
+  return D;
+}
+
+function findInnData(apiData, innid, innName) {
+  if (!apiData) return null;
+  // Try different structures
+  const list = apiData.list || apiData.inns || apiData.data || (Array.isArray(apiData) ? apiData : []);
+  if (Array.isArray(list)) {
+    return list.find(item => 
+      String(item.innid || item.inn_id || item.id) === String(innid) ||
+      item.inn_name === innName || item.name === innName
+    );
+  }
+  return null;
+}
+
+function formatDate(d) {
+  const y = d.getFullYear();
+  const m = ('0' + (d.getMonth() + 1)).slice(-2);
+  const dd = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + dd;
+}
+
+// ===== 推送到GitHub =====
+async function pushToGitHub(D) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(D))));
+  
+  // Get current file SHA
+  let sha = '';
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/data.json`, {
+      headers: { 'Authorization': `token ${getGHToken()}` }
+    });
+    if (r.ok) sha = (await r.json()).sha;
+  } catch(e) {}
+  
+  // Push
+  const body = { message: `auto-update: yzg-api ${D.collectTime}`, content };
+  if (sha) body.sha = sha;
+  
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/data.json`, {
+    method: 'PUT',
+    headers: { 'Authorization': `token ${getGHToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  
+  if (r.ok) {
+    pushCount++;
+    document.getElementById('sPush').textContent = pushCount;
+    log(`GitHub推送成功 ✓ (#${pushCount})`, 'ok');
+    return true;
+  } else {
+    const err = await r.json();
+    log(`GitHub推送失败: ${err.message || r.status}`, 'err');
+    return false;
+  }
+}
+
+// ===== 主流程 =====
+async function runOnce() {
+  try {
+    document.getElementById('statusTag').className = 'tag run';
+    document.getElementById('statusTag').textContent = '运行中';
+    log('========== 开始执行 ==========');
+    
+    const D = await buildDashboardData();
+    await pushToGitHub(D);
+    
+    log('========== 执行完成 ==========', 'ok');
+    document.getElementById('statusTag').className = 'tag ok';
+    document.getElementById('statusTag').textContent = '正常';
+  } catch(e) {
+    log('执行出错: ' + e.message, 'err');
+    document.getElementById('statusTag').className = 'tag err';
+    document.getElementById('statusTag').textContent = '错误';
+    if (e.message.includes('登录已过期')) {
+      log('⚠️ 请重新登录 v2.yunzhanggui.net 后再试', 'err');
+    }
+  }
+}
+
+function startBridge() {
+  if (timer) return;
+  runOnce();
+  timer = setInterval(runOnce, INTERVAL_MS);
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('btnStop').disabled = false;
+  log(`数据桥已启动，每${INTERVAL_MS/60000}分钟自动执行`, 'ok');
+}
+
+function stopBridge() {
+  if (timer) { clearInterval(timer); timer = null; }
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnStop').disabled = true;
+  document.getElementById('statusTag').className = 'tag';
+  document.getElementById('statusTag').textContent = '已停止';
+  log('数据桥已停止');
+}
+
+// 页面加载后检查登录状态
+window.addEventListener('load', () => {
+  const auth = getAuth();
+  if (auth) {
+    log('检测到云掌柜登录态 ✓，可以启动数据桥', 'ok');
+  } else {
+    log('⚠️ 未检测到云掌柜登录态！请先在同一浏览器登录 v2.yunzhanggui.net', 'warn');
+    log('提示：本页面需要与云掌柜在同一浏览器/同源下运行', 'warn');
+  }
+});
+</script>
+</body>
+</html>
