@@ -3,51 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>扬际酒店 · 集团看板</title>
+<title>扬际酒店 · 集团运营看板</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#0f1923;color:#e0e6ed;padding:16px;font-size:15px}
-.header{background:linear-gradient(135deg,#1a2a3a,#2c3e50);border-radius:12px;padding:20px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2c3e50}
-.header h1{font-size:22px;color:#fff}
-.header .meta{font-size:13px;color:#8899aa;text-align:right}
-.header .meta .time{color:#4fc3f7;font-size:15px;font-weight:600}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#14101f;color:#e8e0f5;padding:20px;font-size:15px}
 
+/* 顶栏 */
+.header{background:linear-gradient(135deg,#1e1830 0%,#282240 100%);border-radius:12px;padding:20px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2d2545}
+.header h1{font-size:21px;color:#e8e0f5;font-weight:600;letter-spacing:1px}
+.header h1 em{font-style:normal;color:#a78bfa}
+.header .meta{font-size:12px;color:#8a7ea6;text-align:right;line-height:1.8}
+.header .meta .time{color:#a78bfa;font-size:14px;font-weight:600}
+
+/* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-.kpi{background:#1a2a3a;border-radius:10px;padding:16px 20px;border:1px solid #2c3e50;text-align:center}
-.kpi .val{font-size:28px;font-weight:700;color:#4fc3f7}
-.kpi .val.green{color:#66bb6a}.kpi .val.yellow{color:#ffa726}.kpi .val.red{color:#ef5350}
-.kpi .lbl{font-size:13px;color:#8899aa;margin-top:4px}
+.kpi{background:#1e1830;border-radius:10px;padding:18px 16px;border:1px solid #2d2545;text-align:center;transition:border-color .2s}
+.kpi:hover{border-color:#3d3460}
+.kpi .val{font-size:30px;font-weight:700;color:#a78bfa;letter-spacing:0.5px}
+.kpi .val.green{color:#5cb890}.kpi .val.yellow{color:#d4a030}.kpi .val.red{color:#e05555}
+.kpi .lbl{font-size:12px;color:#8a7ea6;margin-top:5px;letter-spacing:0.5px}
 
+/* 区域 */
 .region-section{margin-bottom:20px}
-.region-title{font-size:16px;color:#4fc3f7;margin-bottom:12px;padding-left:10px;border-left:3px solid #4fc3f7;font-weight:600}
+.region-title{font-size:15px;color:#a78bfa;margin-bottom:12px;padding-left:10px;border-left:3px solid #a78bfa;font-weight:600;letter-spacing:0.5px}
 
-.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-.store-card{background:#1a2a3a;border-radius:10px;padding:18px 20px;border:1px solid #2c3e50;cursor:pointer;transition:all .25s;text-decoration:none;display:block;color:#e0e6ed}
-.store-card:hover{border-color:#4fc3f7;transform:translateY(-2px);box-shadow:0 4px 20px rgba(79,195,247,0.15)}
-.store-card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.store-card .store-name{font-size:18px;font-weight:700;color:#4fc3f7}
-.store-card .store-type{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500}
-.store-card .type-公寓{background:#1a3a5c;color:#4fc3f7}
-.store-card .type-民宿{background:#3a2a1a;color:#ffa726}
+/* 门店卡片 */
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.store-card{background:#1e1830;border-radius:10px;padding:16px 20px;border:1px solid #2d2545;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:#e8e0f5}
+.store-card:hover{border-color:#a78bfa;box-shadow:0 2px 16px rgba(167,139,250,0.08)}
+.store-card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.store-card .store-name{font-size:17px;font-weight:700;color:#e8e0f5}
+.store-card .store-type{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:500}
+.store-card .type-公寓{background:rgba(167,139,250,0.12);color:#a78bfa}
+.store-card .type-民宿{background:rgba(212,160,48,0.12);color:#d4a030}
 .store-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .store-card .metric{text-align:center}
-.store-card .metric .m-val{font-size:20px;font-weight:700}
-.store-card .metric .m-val.good{color:#66bb6a}.store-card .metric .m-val.mid{color:#ffa726}.store-card .metric .m-val.bad{color:#ef5350}
-.store-card .metric .m-lbl{font-size:11px;color:#8899aa;margin-top:2px}
-.store-card .arrow{color:#546e7a;font-size:16px;margin-top:10px;text-align:right}
+.store-card .metric .m-val{font-size:19px;font-weight:700}
+.store-card .metric .m-val.good{color:#5cb890}.store-card .metric .m-val.mid{color:#d4a030}.store-card .metric .m-val.bad{color:#e05555}
+.store-card .metric .m-lbl{font-size:10px;color:#8a7ea6;margin-top:2px}
+.store-card .arrow{color:#5a5070;font-size:14px;margin-top:8px;text-align:right}
 
-.trend-section{background:#1a2a3a;border-radius:10px;padding:20px;margin-bottom:20px;border:1px solid #2c3e50}
-.trend-section h2{font-size:18px;color:#4fc3f7;margin-bottom:12px;padding-left:10px;border-left:3px solid #4fc3f7}
+/* 趋势 */
+.trend-section{background:#1e1830;border-radius:10px;padding:20px;margin-bottom:20px;border:1px solid #2d2545}
+.trend-section h2{font-size:16px;color:#a78bfa;margin-bottom:12px;padding-left:10px;border-left:3px solid #a78bfa;font-weight:600}
 .chart-box{height:280px}
 
-.footer{text-align:center;color:#546e7a;font-size:11px;padding:12px;margin-top:8px}
-.refresh-hint{font-size:12px;color:#78909c;margin-top:4px}
+.footer{text-align:center;color:#5a5070;font-size:11px;padding:12px;margin-top:8px;letter-spacing:0.5px}
+.refresh-hint{font-size:11px;color:#6a5e82;margin-top:4px}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🏨 扬际酒店 · 集团运营看板</h1>
+  <h1>🏨 扬际酒店 · <em>集团运营看板</em></h1>
   <div class="meta">
     <div class="time" id="collectTime">加载中...</div>
     <div>数据来源：云掌柜PMS via bi.yjhotel.xyz</div>
@@ -64,14 +72,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 <div id="storeList"></div>
 
-<div class="footer">扬际酒店运营中心 · 经营动态看板 | 数据来源：云掌柜PMS</div>
+<div class="footer">扬际酒店运营中心 · 经营动态看板</div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 const NAME_MAP = { '白象街5店': '白象街旗舰店' };
 function displayName(name) { return NAME_MAP[name] || name; }
-
-let D = null; // raw dashboard data
+let D = null;
 
 async function loadData() {
   try {
@@ -91,7 +98,6 @@ function renderAll() {
   document.getElementById('collectTime').textContent = '数据采集: ' + D.collectTime;
   document.getElementById('refreshHint').textContent = '页面数据为快照，刷新页面获取最新';
 
-  // Group KPIs from storeMatrix aggregation
   const totalRooms = D.totalRooms || D.storeMatrix.reduce((s,m) => s + m.day0_total, 0);
   const totalOccupied = D.totalOccupied || D.storeMatrix.reduce((s,m) => s + m.day0_sold, 0);
   const totalRevenue = D.totalRevenue || D.storeMatrix.reduce((s,m) => s + (m.day0_revenue||0), 0);
@@ -107,10 +113,8 @@ function renderAll() {
   ].map(k => `<div class="kpi"><div class="val ${k.cls}">${k.val}</div><div class="lbl">${k.lbl}</div></div>`).join('');
   document.getElementById('kpiRow').innerHTML = kpiHtml;
 
-  // Trend
   renderTrend();
 
-  // Store cards by region
   const regions = D.regionSummary || {};
   const regionOrder = ['重庆','珠海','桂林'];
   let html = '';
@@ -149,18 +153,17 @@ function renderTrend() {
   if (!D || !D.trendDates) return;
   const chart = echarts.init(document.getElementById('trendChart'));
   chart.setOption({
-    tooltip:{trigger:'axis',formatter:p=>p[0].name.replace(/\n/g,' ')+'<br/>入住率: <b>'+p[0].value+'%</b>'},
-    xAxis:{type:'category',data:D.trendDates,axisLabel:{color:'#8899aa'},axisLine:{lineStyle:{color:'#2c3e50'}}},
-    yAxis:{type:'value',max:100,axisLabel:{color:'#8899aa',formatter:'{value}%'},splitLine:{lineStyle:{color:'#1e2d3d'}},axisLine:{lineStyle:{color:'#2c3e50'}}},
-    series:[{type:'bar',data:D.trendRates,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#4fc3f7'},{offset:1,color:'#1565c0'}])},barWidth:40,
-      label:{show:true,formatter:p=>p.value+'%',color:'#4fc3f7',fontSize:12,position:'top'}}],
+    tooltip:{trigger:'axis',formatter:p=>p[0].name.replace(/\n/g,' ')+'<br/>入住率: <b>'+p[0].value+'%</b>',backgroundColor:'#1e1830',borderColor:'#2d2545',textStyle:{color:'#e8e0f5'}},
+    xAxis:{type:'category',data:D.trendDates,axisLabel:{color:'#8a7ea6',fontSize:11},axisLine:{lineStyle:{color:'#2d2545'}},axisTick:{show:false}},
+    yAxis:{type:'value',max:100,axisLabel:{color:'#8a7ea6',formatter:'{value}%',fontSize:11},splitLine:{lineStyle:{color:'#241e38',type:'dashed'}},axisLine:{show:false},axisTick:{show:false}},
+    series:[{type:'bar',data:D.trendRates,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#a78bfa'},{offset:1,color:'#7c5fc4'}]),borderRadius:[3,3,0,0]},barWidth:28,
+      label:{show:true,formatter:p=>p.value+'%',color:'#a78bfa',fontSize:10,position:'top'}}],
     grid:{left:50,right:20,top:30,bottom:30}
   });
   window.addEventListener('resize',()=>chart.resize());
 }
 
 loadData();
-setInterval(loadData, 10 * 60 * 1000); // 每10分钟自动刷新
 </script>
 </body>
 </html>
