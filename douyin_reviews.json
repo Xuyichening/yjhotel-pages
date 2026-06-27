@@ -3,10 +3,11 @@
   "totalOnPlatform": "2428",
   "store": "長夏江城·城市民宿",
   "city": "阳朔",
-  "scrapeTime": "2026-06-28T00:08:28.090081",
+  "scrapeTime": "2026-06-28T00:39:50.492872",
   "repliedThisRun": 0,
   "reviews": [
     {
+      "id": "dy_333bdd79",
       "index": 0,
       "ratingText": "超赞",
       "stars": 5,
@@ -18,31 +19,29 @@
       "replyStatus": "已回复",
       "merchantReply": "感谢您的五星好评！环境安静舒适是我们一直坚持的标准，店长和全体伙伴都很乐意为您服务～下次来重庆，记得再来解放碑找我们，洪崖洞夜景和咱家温馨房间等着您！❤️",
       "hasImage": false,
-      "viewCount": "0人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_d20731babf53"
+      "viewCount": "0人看过"
     },
     {
+      "id": "dy_6c63c798",
       "index": 1,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "10小时前",
+      "publishTime": "11小时前",
       "content": "性价比高，挺不错",
       "isRatingOnly": false,
       "nickname": "离垢.",
       "spuName": "已消费✨星河入梦【两居·3晚】连住三天慢重庆+停车库+洗衣机+出行方便+叫醒服务",
       "replyStatus": "已回复",
-      "merchantReply": "感谢您的好评！性价比是我们一直努力的方向，很高兴您觉得物超所值～期待下次再来重庆玩，解放碑和洪崖洞的美景还有咱家温馨房间都在等您！❤️",
+      "merchantReply": "感谢您的好评！性价比是我们一直努力的方向，很高兴您觉得物超所值～期待下次再来重庆玩，解放碑和洪崖洞的美景还有咱家温馨的房间都在等您！❤️",
       "hasImage": false,
-      "viewCount": "0人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_f95f79becea5"
+      "viewCount": "0人看过"
     },
     {
+      "id": "dy_6c3b7ca2",
       "index": 2,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "12小时前",
+      "publishTime": "13小时前",
       "content": "房间干净卫生，前台小哥服务很热情，下次过来还会选择这家酒店。",
       "isRatingOnly": false,
       "nickname": "Arth.",
@@ -50,11 +49,10 @@
       "replyStatus": "已回复",
       "merchantReply": "感谢您的五星好评！干净卫生是我们最基本的承诺，前台小哥的热情也是咱家的标配～下次来重庆，记得再来找我们，解放碑洪崖洞的夜景配上咱家温馨房间，绝配！期待您的再次光临❤️",
       "hasImage": true,
-      "viewCount": "15人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_680d24698dea"
+      "viewCount": "15人看过"
     },
     {
+      "id": "dy_21de3ee9",
       "index": 3,
       "ratingText": "超赞",
       "stars": 5,
@@ -66,11 +64,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～",
       "hasImage": true,
-      "viewCount": "45人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_7d659f903ea4"
+      "viewCount": "45人看过"
     },
     {
+      "id": "dy_46111100",
       "index": 4,
       "ratingText": "超赞",
       "stars": 5,
@@ -82,11 +79,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“交通方便、环境优美、服务设施好，值得入住”也太让人开心了吧！😭❤️ 满意就好～咱家优点全被你发现啦！✨ 下次再来必须继续宠你，让你住得更舒心！冲鸭，等你哟～🏙️💕",
       "hasImage": true,
-      "viewCount": "40人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_09e31bc2ad8e"
+      "viewCount": "40人看过"
     },
     {
+      "id": "dy_57424d85",
       "index": 5,
       "ratingText": "超赞",
       "stars": 5,
@@ -98,11 +94,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“非常不错，下次还会选择”也太甜了吧！😭❤️ 你满意我们就开心～下次再来必须继续宠你，给你安排得明明白白！冲鸭，等你哟～✨",
       "hasImage": true,
-      "viewCount": "0人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_1a2cc32bc9fc"
+      "viewCount": "0人看过"
     },
     {
+      "id": "dy_562fb796a",
       "index": 6,
       "ratingText": "超赞",
       "stars": 5,
@@ -114,11 +109,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“很不错”也太酷了吧！😎 简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！❤️ 等你哟～✨",
       "hasImage": false,
-      "viewCount": "1人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "viewCount": "1人看过"
     },
     {
+      "id": "dy_562fb796b",
       "index": 7,
       "ratingText": "超赞",
       "stars": 5,
@@ -130,11 +124,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“很不错”也太酷了吧！😎 简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！❤️ 等你哟～✨",
       "hasImage": false,
-      "viewCount": "0人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "viewCount": "0人看过"
     },
     {
+      "id": "dy_562fb796c",
       "index": 8,
       "ratingText": "超赞",
       "stars": 5,
@@ -146,11 +139,10 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“很不错”也太酷了吧！😎 简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！❤️ 等你哟～✨",
       "hasImage": false,
-      "viewCount": "0人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "viewCount": "0人看过"
     },
     {
+      "id": "dy_46eb24ef",
       "index": 9,
       "ratingText": "超赞",
       "stars": 5,
@@ -162,9 +154,7 @@
       "replyStatus": "已回复",
       "merchantReply": "尊敬的宾客，感谢您的认可与好评。您的一句“还可以”与“入住体验很好”是对我们最大的鼓励，尤其“下次还会选择”更让我们倍感温暖。我们会一如既往保持干净舒适的居住环境和热情周到的服务，期待您再次光临，为您带来更舒心的入住体验。",
       "hasImage": true,
-      "viewCount": "50人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_d18ab03043c6"
+      "viewCount": "50人看过"
     }
   ]
 }
