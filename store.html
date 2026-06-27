@@ -359,13 +359,15 @@ async function loadData() {
       groupOccupancy: D.groupOccupancy, groupAvgPrice: D.groupAvgPrice,
       totalRooms: D.totalRooms, totalOccupied: D.totalOccupied, totalRevenue: D.totalRevenue,
       trendDates: D.trendDates, trendRates: D.trendRates,
+      trendRevenues: D.trendRevenues || [], trendSolds: D.trendSolds || [],
       focusDates: D.focusDates, focusLabels: D.focusLabels,
       lastWeekDates: D.lastWeekDates, lastWeekLabels: D.lastWeekLabels,
       hasHistory: D.hasHistory, lastYearDates: D.lastYearDates,
       hasLastYear: D.hasLastYear, lastYearWeekdays: D.lastYearWeekdays,
       collectTime: D.collectTime, today: D.today,
       ctripCompetitors: D.ctripCompetitors || {},
-      storeReviews: D.storeReviews || {}
+      storeReviews: D.storeReviews || {},
+      dailyHistory: (D.storeDailyHistory || {})[sd.displayName] || []
     };
     renderAll();
     renderReviews();
@@ -472,6 +474,12 @@ function renderTrend() {
     if (focusIdx >= 0 && focusIdx <= 3) {
       return { date: dt, occ: matrix['day'+focusIdx+'_occ'], revenue: matrix['day'+focusIdx+'_revenue'], sold: matrix['day'+focusIdx+'_sold'], available: matrix['day'+focusIdx+'_available'], total: matrix['day'+focusIdx+'_total'], sold_avg: matrix['day'+focusIdx+'_sold_avg'], source: 'storeMatrix' };
     }
+    // 优先使用精确历史数据（SQL直连）
+    const histEntry = (SD.dailyHistory || []).find(h => h.date === dt);
+    if (histEntry) {
+      return { date: dt, occ: histEntry.occ, revenue: histEntry.revenue, sold: histEntry.sold, available: histEntry.total - histEntry.sold, total: histEntry.total, sold_avg: histEntry.sold_avg, source: 'historyData' };
+    }
+    // 降级：订单推算
     const dayOrders = cycleData.filter(o => o.checkin_date === dt);
     if (dayOrders.length === 0) return { date: dt, occ: null, revenue: 0, sold: 0, available: totalRooms, total: totalRooms, sold_avg: 0, source: 'none' };
     const sold = dayOrders.reduce((s,o) => s + (o.nights||1), 0);
@@ -487,10 +495,12 @@ function renderTrend() {
   });
 
   const matrixCount = items.filter(d => d.source === 'storeMatrix').length;
+  const historyCount = items.filter(d => d.source === 'historyData').length;
   const cycleCount = items.filter(d => d.source === 'bookingCycle').length;
   const noneCount = items.filter(d => d.source === 'none').length;
   let srcText = '';
-  if (matrixCount) srcText += matrixCount + '天精确数据';
+  if (matrixCount) srcText += matrixCount + '天实时数据';
+  if (historyCount) srcText += (srcText?' · ':'') + historyCount + '天历史数据';
   if (cycleCount) srcText += (srcText?' · ':'') + cycleCount + '天订单推算';
   if (noneCount) srcText += (srcText?' · ':'') + noneCount + '天无数据';
   document.getElementById('trendSource').textContent = srcText;
@@ -508,6 +518,7 @@ function renderTrend() {
       s += '已售: ' + d.sold + '/' + d.total + '间<br/>';
       s += '均价: ¥' + d.sold_avg;
       if(d.source==='bookingCycle') s += '<br/><span style="color:#d4a030;font-size:11px">⚠ 数据来自订单推算</span>';
+      if(d.source==='historyData') s += '<br/><span style="color:#5cb890;font-size:11px">✓ 数据来自历史记录</span>';
       return s;
     }},
     legend:{data:['入住率','营收','已售间夜'],textStyle:{color:'#8a7ea6'}},
