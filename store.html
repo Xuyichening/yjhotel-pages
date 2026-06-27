@@ -151,7 +151,12 @@ tr:nth-child(even):hover{background:#282040}
 .review-platform-tab{padding:5px 14px;border-radius:6px;cursor:pointer;font-size:13px;background:#100c18;border:1px solid #2d2545;color:#8a7ea6;transition:all .2s}
 .review-platform-tab:hover{background:#1e1830;color:#e8e0f5}
 .review-platform-tab.active{background:#a78bfa;color:#14101f;font-weight:600;border-color:#a78bfa}
-.review-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.review-date-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.review-date-btn{padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;background:#100c18;border:1px solid #2d2545;color:#8a7ea6;transition:all .2s}
+.review-date-btn:hover{background:#1e1830;color:#e8e0f5}
+.review-date-btn.active{background:#a78bfa;color:#14101f;font-weight:600;border-color:#a78bfa}
+.review-date-input{background:#100c18;color:#a78bfa;border:1px solid #2d2545;border-radius:4px;padding:4px 8px;font-size:12px}
+.review-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:14px}
 .review-stat{background:#14101f;border-radius:6px;padding:8px 12px;text-align:center}
 .review-stat .rs-val{font-size:20px;font-weight:700;color:#a78bfa}
 .review-stat .rs-lbl{font-size:11px;color:#8a7ea6;margin-top:2px}
@@ -294,6 +299,7 @@ button[onclick="renderTrend()"]{background:#7c5fc4;color:#e8e0f5;border:none;bor
 <div class="section" id="reviewSection" style="display:none">
   <h2>⭐ 好评回评</h2>
   <div class="review-platform-tabs" id="reviewPlatformTabs"></div>
+  <div class="review-date-filter" id="reviewDateFilter"></div>
   <div class="review-stats" id="reviewStats"></div>
   <div class="review-list" id="reviewList"></div>
 </div>
@@ -779,15 +785,50 @@ setInterval(loadData, 10 * 60 * 1000);
 
 /* ============ 好评回评模块 ============ */
 let currentReviewPlatform = 'douyin';
+let reviewDateMode = 'all'; // all / lastMonth / thisMonth / custom
+let reviewDateStart = '';
+let reviewDateEnd = '';
+
+function isYangshuoStore() {
+  return storeBiName.includes('阳朔') || (SD.displayName && SD.displayName.includes('阳朔'));
+}
+
+function getReviewDateRange() {
+  const now = new Date();
+  let start = null, end = null;
+  if (reviewDateMode === 'lastMonth') {
+    const y = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const m = now.getMonth() === 0 ? 12 : now.getMonth();
+    start = new Date(y, m - 1, 1);
+    end = new Date(y, m, 0, 23, 59, 59);
+  } else if (reviewDateMode === 'thisMonth') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end = now;
+  } else if (reviewDateMode === 'custom' && reviewDateStart && reviewDateEnd) {
+    start = new Date(reviewDateStart);
+    end = new Date(reviewDateEnd + 'T23:59:59');
+  }
+  return { start, end };
+}
+
+function filterReviewsByDate(reviews) {
+  const { start, end } = getReviewDateRange();
+  if (!start && !end) return reviews;
+  return reviews.filter(r => {
+    const d = new Date(r.review_time || r.fetched_at || '');
+    if (isNaN(d.getTime())) return true;
+    if (start && d < start) return false;
+    if (end && d > end) return false;
+    return true;
+  });
+}
 
 function renderReviews() {
   const section = document.getElementById('reviewSection');
   const allReviews = SD.storeReviews || {};
-  // 尝试多种匹配：显示名、bi_name、包含关键词
   const storeKeys = [SD.displayName, storeBiName];
-  // 也做模糊匹配
   Object.keys(allReviews).forEach(k => {
-    if (k.includes('阳朔') || SD.displayName.includes('阳朔') || storeBiName.includes('阳朔')) {
+    if (storeBiName.includes(k) || k.includes(storeBiName) || (SD.displayName && (SD.displayName.includes(k) || k.includes(SD.displayName)))) {
       if (!storeKeys.includes(k)) storeKeys.push(k);
     }
   });
@@ -796,10 +837,9 @@ function renderReviews() {
   for (const key of storeKeys) {
     if (allReviews[key]) { reviewData = allReviews[key]; break; }
   }
-  // 也检查是否有任何key包含阳朔
   if (!reviewData) {
     for (const key of Object.keys(allReviews)) {
-      if (SD.displayName.includes(key) || key.includes(SD.displayName) || storeBiName.includes(key) || key.includes(storeBiName)) {
+      if (SD.displayName && (SD.displayName.includes(key) || key.includes(SD.displayName)) || storeBiName.includes(key) || key.includes(storeBiName)) {
         reviewData = allReviews[key]; break;
       }
     }
@@ -808,7 +848,6 @@ function renderReviews() {
   if (!reviewData || Object.keys(reviewData).length === 0) { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  // 平台标签
   const platforms = Object.keys(reviewData);
   if (!platforms.includes(currentReviewPlatform)) currentReviewPlatform = platforms[0];
 
@@ -818,22 +857,61 @@ function renderReviews() {
   }).join('');
   document.getElementById('reviewPlatformTabs').innerHTML = tabsHtml;
 
-  const reviews = reviewData[currentReviewPlatform] || [];
+  // 日期筛选 - 只在阳朔店显示
+  if (isYangshuoStore()) {
+    document.getElementById('reviewDateFilter').style.display = 'flex';
+    document.getElementById('reviewDateFilter').innerHTML = `
+      <div class="review-date-btn${reviewDateMode==='all'?' active':''}" onclick="setReviewDateMode('all')">全部</div>
+      <div class="review-date-btn${reviewDateMode==='lastMonth'?' active':''}" onclick="setReviewDateMode('lastMonth')">上月</div>
+      <div class="review-date-btn${reviewDateMode==='thisMonth'?' active':''}" onclick="setReviewDateMode('thisMonth')">本月</div>
+      <div class="review-date-btn${reviewDateMode==='custom'?' active':''}" onclick="setReviewDateMode('custom')">自定义</div>
+      <input type="date" class="review-date-input" id="reviewDateStartInput" value="${reviewDateStart}" onchange="reviewDateStart=this.value;renderReviews()" style="display:${reviewDateMode==='custom'?'inline-block':'none'}">
+      <span style="color:#8a7ea6;display:${reviewDateMode==='custom'?'inline':'none'}">~</span>
+      <input type="date" class="review-date-input" id="reviewDateEndInput" value="${reviewDateEnd}" onchange="reviewDateEnd=this.value;renderReviews()" style="display:${reviewDateMode==='custom'?'inline-block':'none'}">
+    `;
+  } else {
+    document.getElementById('reviewDateFilter').style.display = 'none';
+  }
 
-  // 统计
-  const total = reviews.length;
-  const replied = reviews.filter(r => r.reply_status === 'replied').length;
-  const pending = reviews.filter(r => r.reply_status === 'pending' && r.rating >= 4).length;
-  const skipped = reviews.filter(r => r.reply_status === 'skipped' || (r.rating <= 3 && r.reply_status !== 'replied')).length;
-  const highRating = reviews.filter(r => r.rating >= 4).length;
+  const allPlatformReviews = reviewData[currentReviewPlatform] || [];
+  const reviews = isYangshuoStore() ? filterReviewsByDate(allPlatformReviews) : allPlatformReviews;
 
-  document.getElementById('reviewStats').innerHTML = `
-    <div class="review-stat"><div class="rs-val">${total}</div><div class="rs-lbl">总评价</div></div>
-    <div class="review-stat"><div class="rs-val" style="color:#5cb890">${replied}</div><div class="rs-lbl">已回复</div></div>
-    <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复(4★+)</div></div>
-    <div class="review-stat"><div class="rs-val" style="color:#6a5e82">${skipped}</div><div class="rs-lbl">差评跳过(≤3★)</div></div>
-    <div class="review-stat"><div class="rs-val">${highRating}</div><div class="rs-lbl">好评(4★+)</div></div>
-  `;
+  // 星级分类统计 - 只在阳朔店显示详细星级
+  if (isYangshuoStore()) {
+    const star5WithImg = reviews.filter(r => r.rating === 5 && r.has_images).length;
+    const star5NoImg = reviews.filter(r => r.rating === 5 && !r.has_images).length;
+    const star4 = reviews.filter(r => r.rating === 4).length;
+    const star3 = reviews.filter(r => r.rating === 3).length;
+    const star2 = reviews.filter(r => r.rating === 2).length;
+    const star1 = reviews.filter(r => r.rating === 1).length;
+    const total = reviews.length;
+    const replied = reviews.filter(r => r.reply_status === 'replied').length;
+    const pending = reviews.filter(r => r.reply_status === 'pending' && r.rating >= 4).length;
+
+    document.getElementById('reviewStats').innerHTML = `
+      <div class="review-stat"><div class="rs-val" style="color:#e8e0f5">${total}</div><div class="rs-lbl">总评价</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${star5WithImg}</div><div class="rs-lbl">5★ 带图</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${star5NoImg}</div><div class="rs-lbl">5★ 无图</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#c8a840">${star4}</div><div class="rs-lbl">4★</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#8a7ea6">${star3}</div><div class="rs-lbl">3★</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#6a5e82">${star2}</div><div class="rs-lbl">2★</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#e05555">${star1}</div><div class="rs-lbl">1★</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#5cb890">${replied}</div><div class="rs-lbl">已回复</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复</div></div>
+    `;
+  } else {
+    // 其他门店保持原来的简单统计
+    const total = reviews.length;
+    const replied = reviews.filter(r => r.reply_status === 'replied').length;
+    const pending = reviews.filter(r => r.reply_status === 'pending' && r.rating >= 4).length;
+    const skipped = reviews.filter(r => r.reply_status === 'skipped' || (r.rating <= 3 && r.reply_status !== 'replied')).length;
+    document.getElementById('reviewStats').innerHTML = `
+      <div class="review-stat"><div class="rs-val">${total}</div><div class="rs-lbl">总评价</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#5cb890">${replied}</div><div class="rs-lbl">已回复</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复(4★+)</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#6a5e82">${skipped}</div><div class="rs-lbl">差评跳过(≤3★)</div></div>
+    `;
+  }
 
   // 评价列表
   if (!reviews.length) {
@@ -850,6 +928,9 @@ function renderReviews() {
     if (r.reply_status === 'replied') statusBadge = '<span class="reply-badge replied">✅ 已回复</span>';
     else if (r.rating <= 3) statusBadge = '<span class="reply-badge skipped">⊘ 差评不回复</span>';
     else statusBadge = '<span class="reply-badge pending">⏳ 待回复</span>';
+
+    let imgBadge = '';
+    if (r.has_images) imgBadge = '<span style="font-size:11px;background:rgba(167,139,250,0.15);color:#a78bfa;padding:1px 6px;border-radius:3px;margin-left:4px">📷 带图</span>';
 
     let replyHtml = '';
     if (r.reply_content) {
@@ -870,6 +951,7 @@ function renderReviews() {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="review-stars">${stars}</div>
+          ${imgBadge}
           ${statusBadge}
         </div>
       </div>
@@ -880,6 +962,20 @@ function renderReviews() {
   }).join('');
 
   document.getElementById('reviewList').innerHTML = listHtml;
+}
+
+function setReviewDateMode(mode) {
+  reviewDateMode = mode;
+  if (mode === 'custom') {
+    const now = new Date();
+    if (!reviewDateEnd) reviewDateEnd = now.toISOString().slice(0, 10);
+    if (!reviewDateStart) {
+      const d = new Date(now);
+      d.setMonth(d.getMonth() - 1);
+      reviewDateStart = d.toISOString().slice(0, 10);
+    }
+  }
+  renderReviews();
 }
 
 function switchReviewPlatform(platform, btn) {
