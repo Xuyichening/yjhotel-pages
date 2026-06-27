@@ -785,7 +785,7 @@ setInterval(loadData, 10 * 60 * 1000);
 
 /* ============ 好评回评模块 ============ */
 let currentReviewPlatform = 'douyin';
-let reviewDateMode = 'all'; // all / lastMonth / thisMonth / custom
+let reviewDateMode = 'all'; // all / last7d / lastMonth / thisMonth / custom
 let reviewDateStart = '';
 let reviewDateEnd = '';
 
@@ -796,7 +796,12 @@ function isYangshuoStore() {
 function getReviewDateRange() {
   const now = new Date();
   let start = null, end = null;
-  if (reviewDateMode === 'lastMonth') {
+  if (reviewDateMode === 'last7d') {
+    start = new Date(now);
+    start.setDate(start.getDate() - 7);
+    start.setHours(0, 0, 0, 0);
+    end = now;
+  } else if (reviewDateMode === 'lastMonth') {
     const y = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
     const m = now.getMonth() === 0 ? 12 : now.getMonth();
     start = new Date(y, m - 1, 1);
@@ -805,7 +810,7 @@ function getReviewDateRange() {
     start = new Date(now.getFullYear(), now.getMonth(), 1);
     end = now;
   } else if (reviewDateMode === 'custom' && reviewDateStart && reviewDateEnd) {
-    start = new Date(reviewDateStart);
+    start = new Date(reviewDateStart + 'T00:00:00');
     end = new Date(reviewDateEnd + 'T23:59:59');
   }
   return { start, end };
@@ -815,7 +820,8 @@ function filterReviewsByDate(reviews) {
   const { start, end } = getReviewDateRange();
   if (!start && !end) return reviews;
   return reviews.filter(r => {
-    const d = new Date(r.review_time || r.fetched_at || '');
+    const timeStr = r.review_time || r.fetched_at || '';
+    const d = new Date(timeStr.replace(' ', 'T'));
     if (isNaN(d.getTime())) return true;
     if (start && d < start) return false;
     if (end && d > end) return false;
@@ -851,21 +857,25 @@ function renderReviews() {
   // 日期筛选 - 只在阳朔店显示
   if (isYangshuoStore()) {
     document.getElementById('reviewDateFilter').style.display = 'flex';
+    const customShow = reviewDateMode === 'custom' ? 'inline-block' : 'none';
+    const customSpan = reviewDateMode === 'custom' ? 'inline' : 'none';
     document.getElementById('reviewDateFilter').innerHTML = `
       <div class="review-date-btn${reviewDateMode==='all'?' active':''}" onclick="setReviewDateMode('all')">全部</div>
-      <div class="review-date-btn${reviewDateMode==='lastMonth'?' active':''}" onclick="setReviewDateMode('lastMonth')">上月</div>
+      <div class="review-date-btn${reviewDateMode==='last7d'?' active':''}" onclick="setReviewDateMode('last7d')">近7天</div>
       <div class="review-date-btn${reviewDateMode==='thisMonth'?' active':''}" onclick="setReviewDateMode('thisMonth')">本月</div>
+      <div class="review-date-btn${reviewDateMode==='lastMonth'?' active':''}" onclick="setReviewDateMode('lastMonth')">上月</div>
       <div class="review-date-btn${reviewDateMode==='custom'?' active':''}" onclick="setReviewDateMode('custom')">自定义</div>
-      <input type="date" class="review-date-input" id="reviewDateStartInput" value="${reviewDateStart}" onchange="reviewDateStart=this.value;renderReviews()" style="display:${reviewDateMode==='custom'?'inline-block':'none'}">
-      <span style="color:#8a7ea6;display:${reviewDateMode==='custom'?'inline':'none'}">~</span>
-      <input type="date" class="review-date-input" id="reviewDateEndInput" value="${reviewDateEnd}" onchange="reviewDateEnd=this.value;renderReviews()" style="display:${reviewDateMode==='custom'?'inline-block':'none'}">
+      <input type="date" class="review-date-input" id="reviewDateStartInput" value="${reviewDateStart}" onchange="reviewDateStart=this.value;renderReviews()" style="display:${customShow}">
+      <span style="color:#8a7ea6;display:${customSpan}">~</span>
+      <input type="date" class="review-date-input" id="reviewDateEndInput" value="${reviewDateEnd}" onchange="reviewDateEnd=this.value;renderReviews()" style="display:${customShow}">
     `;
   } else {
     document.getElementById('reviewDateFilter').style.display = 'none';
   }
 
   const allPlatformReviews = reviewData[currentReviewPlatform] || [];
-  const reviews = isYangshuoStore() ? filterReviewsByDate(allPlatformReviews) : allPlatformReviews;
+  const filteredReviews = isYangshuoStore() ? filterReviewsByDate(allPlatformReviews) : allPlatformReviews;
+  const reviews = filteredReviews;
 
   // 星级分类统计 - 只在阳朔店显示详细星级
   if (isYangshuoStore()) {
@@ -876,10 +886,13 @@ function renderReviews() {
     const star2 = reviews.filter(r => r.rating === 2).length;
     const star1 = reviews.filter(r => r.rating === 1).length;
     const total = reviews.length;
+    const totalAll = allPlatformReviews.length;
     const replied = reviews.filter(r => r.reply_status === 'replied').length;
-    const pending = reviews.filter(r => r.reply_status === 'pending' && r.rating >= 4).length;
+    const pending = reviews.filter(r => r.reply_status === 'pending').length;
+    const filterHint = reviewDateMode !== 'all' ? `<div class="review-stat" style="grid-column:1/-1;text-align:left;padding:4px 12px"><span style="font-size:11px;color:#8a7ea6">📅 筛选结果: ${total} / ${totalAll} 条</span></div>` : '';
 
     document.getElementById('reviewStats').innerHTML = `
+      ${filterHint}
       <div class="review-stat"><div class="rs-val" style="color:#e8e0f5">${total}</div><div class="rs-lbl">总评价</div></div>
       <div class="review-stat"><div class="rs-val" style="color:#d4a030">${star5WithImg}</div><div class="rs-lbl">5★ 带图</div></div>
       <div class="review-stat"><div class="rs-val" style="color:#d4a030">${star5NoImg}</div><div class="rs-lbl">5★ 无图</div></div>
@@ -888,7 +901,7 @@ function renderReviews() {
       <div class="review-stat"><div class="rs-val" style="color:#6a5e82">${star2}</div><div class="rs-lbl">2★</div></div>
       <div class="review-stat"><div class="rs-val" style="color:#e05555">${star1}</div><div class="rs-lbl">1★</div></div>
       <div class="review-stat"><div class="rs-val" style="color:#5cb890">${replied}</div><div class="rs-lbl">已回复</div></div>
-      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复</div></div>
+      <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复(4★+)</div></div>
     `;
   } else {
     // 其他门店保持原来的简单统计
@@ -965,6 +978,12 @@ function setReviewDateMode(mode) {
       d.setMonth(d.getMonth() - 1);
       reviewDateStart = d.toISOString().slice(0, 10);
     }
+  } else if (mode === 'last7d') {
+    // no extra setup needed
+  } else if (mode === 'lastMonth') {
+    // no extra setup needed
+  } else if (mode === 'thisMonth') {
+    // no extra setup needed
   }
   renderReviews();
 }
