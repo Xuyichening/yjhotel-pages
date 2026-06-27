@@ -146,7 +146,7 @@
   "访酒店": {
     "ctrip": [
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": true,
@@ -164,7 +164,7 @@
         "id": "trip_faf4e821d691"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": true,
@@ -182,7 +182,7 @@
         "id": "trip_380733b649af"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 4,
         "rating_text": "",
         "has_images": false,
@@ -200,7 +200,7 @@
         "id": "trip_f3f3d818f76d"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": false,
@@ -218,7 +218,7 @@
         "id": "trip_f4a123b42cd6"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": false,
@@ -236,7 +236,7 @@
         "id": "trip_8e0710ca7e39"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": false,
@@ -254,7 +254,7 @@
         "id": "trip_55cd3eff5923"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": false,
@@ -272,7 +272,7 @@
         "id": "trip_6aa74881bde4"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": true,
@@ -290,7 +290,7 @@
         "id": "trip_62090dd2fcfa"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": false,
@@ -308,7 +308,7 @@
         "id": "trip_27fd93c4ef45"
       },
       {
-        "platform": "trip",
+        "platform": "ctrip",
         "rating": 5,
         "rating_text": "Perfect",
         "has_images": true,
