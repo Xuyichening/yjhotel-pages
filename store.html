@@ -825,26 +825,17 @@ function filterReviewsByDate(reviews) {
 
 function renderReviews() {
   const section = document.getElementById('reviewSection');
+  // 严格匹配：只有当门店在storeReviews中有精确key时才显示好评模块
+  // 每个门店独立账号，不混用，不模糊匹配
   const allReviews = SD.storeReviews || {};
-  const storeKeys = [SD.displayName, storeBiName];
-  Object.keys(allReviews).forEach(k => {
-    if (storeBiName.includes(k) || k.includes(storeBiName) || (SD.displayName && (SD.displayName.includes(k) || k.includes(SD.displayName)))) {
-      if (!storeKeys.includes(k)) storeKeys.push(k);
-    }
-  });
-
   let reviewData = null;
-  for (const key of storeKeys) {
-    if (allReviews[key]) { reviewData = allReviews[key]; break; }
+  // 优先精确匹配storeBiName，再匹配displayName
+  if (allReviews[storeBiName]) {
+    reviewData = allReviews[storeBiName];
+  } else if (SD.displayName && allReviews[SD.displayName]) {
+    reviewData = allReviews[SD.displayName];
   }
-  if (!reviewData) {
-    for (const key of Object.keys(allReviews)) {
-      if (SD.displayName && (SD.displayName.includes(key) || key.includes(SD.displayName)) || storeBiName.includes(key) || key.includes(storeBiName)) {
-        reviewData = allReviews[key]; break;
-      }
-    }
-  }
-
+  // 找不到就隐藏，不做任何模糊匹配
   if (!reviewData || Object.keys(reviewData).length === 0) { section.style.display = 'none'; return; }
   section.style.display = '';
 
