@@ -1,0 +1,122 @@
+{
+  "total": 10,
+  "store": "長夏江城·城市民宿",
+  "city": "重庆市",
+  "scrapeTime": "2026-06-27T12:15:58.035Z",
+  "repliedThisRun": 3,
+  "reviews": [
+    {
+      "index": 0,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "19分钟前",
+      "content": "环境特别适合没有很吵闹 店长也特别好沟通",
+      "nickname": "C**6",
+      "spuName": "已消费🥔超值爆款【两居·1晚】",
+      "replyStatus": "回复(1)",
+      "merchantReply": "感谢您的五星好评！环境安静舒适是我们一直坚持的标准，店长和全体伙伴都很乐意为您服务～下次来重庆，记得再来解放碑找我们，洪崖洞夜景和咱家温馨房间等着您！❤️",
+      "hasImage": false
+    },
+    {
+      "index": 1,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "6小时前",
+      "content": "性价比高，挺不错",
+      "nickname": "离垢.",
+      "spuName": "已消费✨星河入梦【两居·3晚】",
+      "replyStatus": "回复(1)",
+      "merchantReply": "感谢您的好评！性价比是我们一直努力的方向，很高兴您觉得物超所值～期待下次再来重庆玩，解放碑和洪崖洞的美景还有咱家温馨的房间都在等您！❤️",
+      "hasImage": false
+    },
+    {
+      "index": 2,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "8小时前",
+      "content": "房间干净卫生，前台小哥服务很热情，下次过来还会选择这家酒店。",
+      "nickname": "Arth.",
+      "spuName": "已消费🥔超值爆款【两居·1晚】",
+      "replyStatus": "回复(1)",
+      "merchantReply": "感谢您的五星好评！干净卫生是我们最基本的承诺，前台小哥的热情也是咱家的标配～下次来重庆，记得再来找我们，解放碑洪崖洞的夜景配上咱家温馨房间，绝配！期待您的再次光临❤️",
+      "hasImage": true
+    },
+    {
+      "index": 3,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "🏡环境：非常好🛋房型：很大🛁设施：完好🧡服务：前台的人很好🚗交通：方便",
+      "nickname": "奇怪的文章^",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～",
+      "hasImage": true
+    },
+    {
+      "index": 4,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "交通方便环境优美 服务设施好值得入住",
+      "nickname": "xHxH",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这句交通方便环境优美服务设施好值得入住也太让人开心了吧！满意就好～咱家优点全被你发现啦！下次再来必须继续宠你！",
+      "hasImage": true
+    },
+    {
+      "index": 5,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "非常的不错，下次还会选择",
+      "nickname": "嘟**4",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这句非常不错下次还会选择也太甜了吧！你满意我们就开心～下次再来必须继续宠你！",
+      "hasImage": true
+    },
+    {
+      "index": 6,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "很不错",
+      "nickname": "hhjjhff",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这句很不错也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！",
+      "hasImage": false
+    },
+    {
+      "index": 7,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "很不错",
+      "nickname": "hhjjhff",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这句很不错也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！",
+      "hasImage": false
+    },
+    {
+      "index": 8,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "2天前",
+      "content": "很不错",
+      "nickname": "hhjjhff",
+      "replyStatus": "回复(1)",
+      "merchantReply": "宝子这句很不错也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！",
+      "hasImage": false
+    },
+    {
+      "index": 9,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "3天前",
+      "content": "还可以，下次还会选择，入住体验很好",
+      "nickname": "我们都是小怪兽",
+      "replyStatus": "回复(1)",
+      "merchantReply": "尊敬的宾客，感谢您的认可与好评。您的一句还可以与入住体验很好是对我们最大的鼓励。我们会一如既往保持干净舒适的居住环境和热情周到的服务，期待您再次光临。",
+      "hasImage": true
+    }
+  ]
+}
