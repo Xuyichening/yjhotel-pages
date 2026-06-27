@@ -1,0 +1,78 @@
+{
+  "阳朔": {
+    "douyin": [
+      {
+        "id": "dy_demo_001",
+        "platform": "douyin",
+        "rating": 5,
+        "content": "酒店环境很好，服务态度也很棒，离西街很近出行方便！房间干净整洁，住得非常舒服，前台小姐姐还帮我们推荐了周边美食，超贴心～",
+        "reviewer": "旅行小达人",
+        "review_time": "2026-06-27 10:30",
+        "reply_status": "replied",
+        "reply_content": "感谢您选择阳朔扬际酒店并分享入住体验！很高兴您感受到我们用心的清洁标准，每位客人入住前我们都严格把控卫生细节，我们持续优化服务流程和硬件设施，只为给每位客人带来更舒心的入住感受。阳朔的美四季不同，期待与您再次相遇，祝生活愉快！🌙",
+        "reply_time": "2026-06-27 10:45",
+        "fetched_at": "2026-06-27 10:40"
+      },
+      {
+        "id": "dy_demo_002",
+        "platform": "douyin",
+        "rating": 5,
+        "content": "位置超级好！出门步行几分钟就到西街，房间可以看到漓江风景，性价比很高，下次来还住这里",
+        "reviewer": "背包客阿明",
+        "review_time": "2026-06-27 08:15",
+        "reply_status": "replied",
+        "reply_content": "非常感谢您对阳朔扬际酒店的认可与分享！我们选址于此就是为了让客人能轻松畅游，省去交通奔波的烦恼，我们也不断收集客人反馈来改善体验，希望下次见面能让您更加满意。期待成为您每次来阳朔的首选，祝旅途平安！🌺",
+        "reply_time": "2026-06-27 08:30",
+        "fetched_at": "2026-06-27 08:20"
+      },
+      {
+        "id": "dy_demo_003",
+        "platform": "douyin",
+        "rating": 4,
+        "content": "酒店整体不错，早餐种类多味道好，房间安静睡眠质量高，就是卫生间稍微有点小",
+        "reviewer": "美食家小王",
+        "review_time": "2026-06-26 22:45",
+        "reply_status": "replied",
+        "reply_content": "谢谢您选择阳朔扬际酒店，很高兴收到您的好评！美食是旅行中不可或缺的体验，我们不断丰富菜品，让每位客人都能找到心仪的味道，未来我们还会在细节上持续精进，让每一次入住都有新的惊喜。无论何时再来阳朔，我们都恭候您的到来，祝万事如意！🌿",
+        "reply_time": "2026-06-26 23:05",
+        "fetched_at": "2026-06-26 22:50"
+      },
+      {
+        "id": "dy_demo_004",
+        "platform": "douyin",
+        "rating": 5,
+        "content": "前台管家特别热情，帮我们安排了竹筏漂流还给了折扣，真的很贴心！酒店装修风格也很有设计感",
+        "reviewer": "度假期的小鱼",
+        "review_time": "2026-06-26 18:20",
+        "reply_status": "pending",
+        "reply_content": "",
+        "reply_time": "",
+        "fetched_at": "2026-06-26 18:25"
+      },
+      {
+        "id": "dy_demo_005",
+        "platform": "douyin",
+        "rating": 3,
+        "content": "隔音不太好，隔壁说话能听到，其他还行",
+        "reviewer": "出差路过",
+        "review_time": "2026-06-26 14:30",
+        "reply_status": "skipped",
+        "reply_content": "",
+        "reply_time": "",
+        "fetched_at": "2026-06-26 14:35"
+      },
+      {
+        "id": "dy_demo_006",
+        "platform": "douyin",
+        "rating": 2,
+        "content": "停车场太小了，找了半天才停到车，房间味道有点重",
+        "reviewer": "自驾游客",
+        "review_time": "2026-06-25 20:10",
+        "reply_status": "skipped",
+        "reply_content": "",
+        "reply_time": "",
+        "fetched_at": "2026-06-25 20:15"
+      }
+    ]
+  }
+}
