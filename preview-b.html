@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预览B · 浅色极简风</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;color:#1e293b;padding:16px;font-size:15px}
+
+/* 预览标识 */
+.preview-banner{background:linear-gradient(90deg,#4f46e5,#6366f1);color:#fff;text-align:center;padding:10px;font-weight:700;font-size:14px;position:sticky;top:0;z-index:999;border-radius:0 0 8px 8px;margin:-16px -16px 16px;width:calc(100% + 32px)}
+
+/* 方案B：浅色极简风 */
+.header{background:#fff;border-radius:14px;padding:20px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.header h1{font-size:22px;color:#1e293b}
+.header .meta{font-size:13px;color:#94a3b8;text-align:right}
+.header .meta .time{color:#4f46e5;font-size:15px;font-weight:600}
+
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:14px;padding:16px 20px;border:1px solid #e2e8f0;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);transition:all .2s}
+.kpi:hover{box-shadow:0 4px 12px rgba(79,70,229,0.1);border-color:#c7d2fe}
+.kpi .val{font-size:32px;font-weight:700;color:#4f46e5}
+.kpi .val.green{color:#16a34a}.kpi .val.yellow{color:#d97706}.kpi .val.red{color:#dc2626}
+.kpi .lbl{font-size:13px;color:#94a3b8;margin-top:4px}
+
+.region-section{margin-bottom:20px}
+.region-title{font-size:16px;color:#4f46e5;margin-bottom:12px;padding-left:10px;border-left:3px solid #4f46e5;font-weight:600}
+
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.store-card{background:#fff;border-radius:14px;padding:18px 20px;border:1px solid #e2e8f0;cursor:pointer;transition:all .25s;text-decoration:none;display:block;color:#1e293b;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.store-card:hover{border-color:#a5b4fc;transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,70,229,0.1)}
+.store-card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.store-card .store-name{font-size:18px;font-weight:700;color:#4f46e5}
+.store-card .store-type{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:500}
+.store-card .type-公寓{background:#eef2ff;color:#4f46e5}
+.store-card .type-民宿{background:#fff7ed;color:#d97706}
+.store-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.store-card .metric{text-align:center}
+.store-card .metric .m-val{font-size:20px;font-weight:700}
+.store-card .metric .m-val.good{color:#16a34a}.store-card .metric .m-val.mid{color:#d97706}.store-card .metric .m-val.bad{color:#dc2626}
+.store-card .metric .m-lbl{font-size:11px;color:#94a3b8;margin-top:2px}
+.store-card .arrow{color:#cbd5e1;font-size:16px;margin-top:10px;text-align:right}
+
+.trend-section{background:#fff;border-radius:14px;padding:20px;margin-bottom:20px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.trend-section h2{font-size:18px;color:#4f46e5;margin-bottom:12px;padding-left:10px;border-left:3px solid #4f46e5}
+.chart-box{height:280px}
+
+.footer{text-align:center;color:#94a3b8;font-size:11px;padding:12px;margin-top:8px}
+.refresh-hint{font-size:12px;color:#94a3b8;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">🎨 预览B · 浅色极简风 — 白底 + 靛蓝强调 + 轻阴影 + 圆润卡片</div>
+
+<div class="header">
+  <h1>🏨 扬际酒店 · 集团运营看板</h1>
+  <div class="meta">
+    <div class="time" id="collectTime">加载中...</div>
+    <div>数据来源：云掌柜PMS via bi.yjhotel.xyz</div>
+    <div class="refresh-hint" id="refreshHint"></div>
+  </div>
+</div>
+
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="trend-section">
+  <h2>30天入住率趋势（集团合计）</h2>
+  <div id="trendChart" class="chart-box"></div>
+</div>
+
+<div id="storeList"></div>
+
+<div class="footer">扬际酒店运营中心 · 经营动态看板 | 数据来源：云掌柜PMS</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+const NAME_MAP = { '白象街5店': '白象街旗舰店' };
+function displayName(name) { return NAME_MAP[name] || name; }
+let D = null;
+
+async function loadData() {
+  try {
+    const r = await fetch('data.json?t=' + Date.now());
+    D = await r.json();
+    renderAll();
+  } catch(e) {
+    document.getElementById('collectTime').textContent = '加载失败';
+    console.error(e);
+  }
+}
+
+function occClass(v) { return v > 70 ? 'good' : v > 50 ? 'mid' : 'bad'; }
+
+function renderAll() {
+  if (!D) return;
+  document.getElementById('collectTime').textContent = '数据采集: ' + D.collectTime;
+  document.getElementById('refreshHint').textContent = '页面数据为快照，刷新页面获取最新';
+
+  const totalRooms = D.totalRooms || D.storeMatrix.reduce((s,m) => s + m.day0_total, 0);
+  const totalOccupied = D.totalOccupied || D.storeMatrix.reduce((s,m) => s + m.day0_sold, 0);
+  const totalRevenue = D.totalRevenue || D.storeMatrix.reduce((s,m) => s + (m.day0_revenue||0), 0);
+  const groupOcc = D.groupOccupancy || (totalRooms > 0 ? Math.round(totalOccupied/totalRooms*1000)/10 : 0);
+  const groupAvg = D.groupAvgPrice || (totalOccupied > 0 ? Math.round(totalRevenue/totalOccupied) : 0);
+
+  const kpiHtml = [
+    { val: totalRooms, lbl: '集团总房量', cls: '' },
+    { val: totalOccupied, lbl: '今日已售间夜', cls: 'yellow' },
+    { val: groupOcc + '%', lbl: '今日入住率', cls: 'yellow' },
+    { val: '¥' + totalRevenue.toLocaleString('zh-CN',{maximumFractionDigits:0}), lbl: '今日总营收', cls: '' },
+    { val: '¥' + groupAvg, lbl: '集团均价', cls: '' }
+  ].map(k => `<div class="kpi"><div class="val ${k.cls}">${k.val}</div><div class="lbl">${k.lbl}</div></div>`).join('');
+  document.getElementById('kpiRow').innerHTML = kpiHtml;
+
+  renderTrend();
+
+  const regions = D.regionSummary || {};
+  const regionOrder = ['重庆','珠海','桂林'];
+  let html = '';
+  regionOrder.forEach(rg => {
+    if (!regions[rg]) return;
+    const rs = regions[rg];
+    const rgStores = D.storeMatrix.filter(s => s.region === rg);
+    html += `<div class="region-section">
+      <div class="region-title">${rg} · ${rs.rooms}间 | 已售${rs.sold}间 | ¥${(rs.revenue||0).toLocaleString('zh-CN',{maximumFractionDigits:0})}</div>
+      <div class="store-grid">
+        ${rgStores.map(s => renderCard(s)).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('storeList').innerHTML = html;
+}
+
+function renderCard(s) {
+  const cls = occClass(s.day0_occ);
+  const encName = encodeURIComponent(displayName(s.bi_name));
+  return `<a class="store-card" href="store.html?name=${encName}">
+    <div class="card-top">
+      <span class="store-name">${displayName(s.bi_name)}</span>
+      <span class="store-type type-${s.type}">${s.type}</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="m-val ${cls}">${s.day0_occ}%</div><div class="m-lbl">入住率</div></div>
+      <div class="metric"><div class="m-val">${s.day0_sold}/${s.day0_total}</div><div class="m-lbl">已售/总房</div></div>
+      <div class="metric"><div class="m-val">¥${(s.day0_sold_avg||0)}</div><div class="m-lbl">已售均价</div></div>
+    </div>
+    <div class="arrow">查看详情 →</div>
+  </a>`;
+}
+
+function renderTrend() {
+  if (!D || !D.trendDates) return;
+  const chart = echarts.init(document.getElementById('trendChart'));
+  chart.setOption({
+    tooltip:{trigger:'axis',formatter:p=>p[0].name.replace(/\n/g,' ')+'<br/>入住率: <b>'+p[0].value+'%</b>'},
+    xAxis:{type:'category',data:D.trendDates,axisLabel:{color:'#94a3b8'},axisLine:{lineStyle:{color:'#e2e8f0'}}},
+    yAxis:{type:'value',max:100,axisLabel:{color:'#94a3b8',formatter:'{value}%'},splitLine:{lineStyle:{color:'#f1f5f9'}},axisLine:{lineStyle:{color:'#e2e8f0'}}},
+    series:[{type:'bar',data:D.trendRates,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#6366f1'},{offset:1,color:'#4f46e5'}])},barWidth:40,
+      label:{show:true,formatter:p=>p.value+'%',color:'#4f46e5',fontSize:12,position:'top'}}],
+    grid:{left:50,right:20,top:30,bottom:30}
+  });
+  window.addEventListener('resize',()=>chart.resize());
+}
+
+loadData();
+</script>
+</body>
+</html>
