@@ -66,7 +66,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <div class="kpi-row" id="kpiRow"></div>
 
 <div class="trend-section">
-  <h2>30天入住率趋势（集团合计）</h2>
+  <h2>30天入住率 & 营收趋势（集团合计）</h2>
   <div id="trendChart" class="chart-box"></div>
 </div>
 
@@ -151,14 +151,32 @@ function renderCard(s) {
 
 function renderTrend() {
   if (!D || !D.trendDates) return;
+  const hasRevenue = D.trendRevenues && D.trendRevenues.length > 0;
   const chart = echarts.init(document.getElementById('trendChart'));
   chart.setOption({
-    tooltip:{trigger:'axis',formatter:p=>p[0].name.replace(/\n/g,' ')+'<br/>入住率: <b>'+p[0].value+'%</b>',backgroundColor:'#1e1830',borderColor:'#2d2545',textStyle:{color:'#e8e0f5'}},
+    tooltip:{trigger:'axis',backgroundColor:'#1e1830',borderColor:'#2d2545',textStyle:{color:'#e8e0f5'},
+      formatter:function(p){
+        const i=p[0].dataIndex;
+        let s=p[0].name.replace(/\n/g,' ')+'<br/>';
+        s+='入住率: <b>'+D.trendRates[i]+'%</b><br/>';
+        if(hasRevenue){
+          s+='营收: <b>¥'+Math.round(D.trendRevenues[i]).toLocaleString()+'</b><br/>';
+          s+='已售: '+D.trendSolds[i]+'间';
+        }
+        return s;
+      }},
+    legend: hasRevenue ? {data:['入住率','营收'],textStyle:{color:'#8a7ea6'}} : undefined,
     xAxis:{type:'category',data:D.trendDates,axisLabel:{color:'#8a7ea6',fontSize:11},axisLine:{lineStyle:{color:'#2d2545'}},axisTick:{show:false}},
-    yAxis:{type:'value',max:100,axisLabel:{color:'#8a7ea6',formatter:'{value}%',fontSize:11},splitLine:{lineStyle:{color:'#241e38',type:'dashed'}},axisLine:{show:false},axisTick:{show:false}},
-    series:[{type:'bar',data:D.trendRates,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#a78bfa'},{offset:1,color:'#7c5fc4'}]),borderRadius:[3,3,0,0]},barWidth:28,
-      label:{show:true,formatter:p=>p.value+'%',color:'#a78bfa',fontSize:10,position:'top'}}],
-    grid:{left:50,right:20,top:30,bottom:30}
+    yAxis:[
+      {type:'value',max:100,axisLabel:{color:'#8a7ea6',formatter:'{value}%',fontSize:11},splitLine:{lineStyle:{color:'#241e38',type:'dashed'}},axisLine:{show:false},axisTick:{show:false}},
+      hasRevenue ? {type:'value',axisLabel:{color:'#a78bfa',formatter:function(v){return v>=10000?(v/10000).toFixed(1)+'万':'¥'+v}},splitLine:{show:false}} : undefined
+    ],
+    series:[
+      {name:'入住率',type:'bar',data:D.trendRates,yAxisIndex:0,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#a78bfa'},{offset:1,color:'#7c5fc4'}]),borderRadius:[3,3,0,0]},barWidth:hasRevenue?12:28,
+        label:{show:!hasRevenue,formatter:p=>p.value+'%',color:'#a78bfa',fontSize:10,position:'top'}},
+      hasRevenue ? {name:'营收',type:'line',data:D.trendRevenues,yAxisIndex:1,smooth:true,lineStyle:{color:'#a78bfa',width:2},itemStyle:{color:'#a78bfa'},symbol:'circle',symbolSize:4} : undefined
+    ].filter(Boolean),
+    grid:{left:50,right:hasRevenue?60:20,top:40,bottom:30}
   });
   window.addEventListener('resize',()=>chart.resize());
 }
