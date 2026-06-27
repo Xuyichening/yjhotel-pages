@@ -146,6 +146,39 @@ tr:nth-child(even):hover{background:#282040}
 .empty-state{text-align:center;color:#5a5070;padding:40px;font-size:14px}
 .footer{text-align:center;color:#5a5070;font-size:11px;padding:12px;margin-top:8px;letter-spacing:0.5px}
 
+/* 好评回评 */
+.review-platform-tabs{display:flex;gap:6px;margin-bottom:14px}
+.review-platform-tab{padding:5px 14px;border-radius:6px;cursor:pointer;font-size:13px;background:#100c18;border:1px solid #2d2545;color:#8a7ea6;transition:all .2s}
+.review-platform-tab:hover{background:#1e1830;color:#e8e0f5}
+.review-platform-tab.active{background:#a78bfa;color:#14101f;font-weight:600;border-color:#a78bfa}
+.review-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.review-stat{background:#14101f;border-radius:6px;padding:8px 12px;text-align:center}
+.review-stat .rs-val{font-size:20px;font-weight:700;color:#a78bfa}
+.review-stat .rs-lbl{font-size:11px;color:#8a7ea6;margin-top:2px}
+.review-list{display:flex;flex-direction:column;gap:10px}
+.review-card{background:#14101f;border-radius:8px;padding:14px 16px;border:1px solid #2d2545;transition:border-color .2s}
+.review-card:hover{border-color:#3d3460}
+.review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.review-user{display:flex;align-items:center;gap:8px}
+.review-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c5fc4);display:flex;align-items:center;justify-content:center;color:#14101f;font-size:14px;font-weight:700}
+.review-name{font-size:14px;color:#e8e0f5;font-weight:500}
+.review-time{font-size:11px;color:#5a5070;margin-left:6px}
+.review-stars{display:flex;gap:1px}
+.review-star{font-size:14px;color:#5a5070}
+.review-star.filled{color:#d4a030}
+.review-content{font-size:14px;color:#c0b0e0;line-height:1.6;margin-bottom:8px;white-space:pre-wrap}
+.review-reply-status{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.reply-badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.reply-badge.replied{background:rgba(92,184,144,0.12);color:#5cb890}
+.reply-badge.pending{background:rgba(212,160,48,0.12);color:#d4a030}
+.reply-badge.skipped{background:rgba(106,94,130,0.12);color:#6a5e82}
+.review-reply{background:#18142a;border-radius:6px;padding:10px 12px;margin-top:4px;border-left:3px solid #a78bfa}
+.review-reply-label{font-size:11px;color:#a78bfa;font-weight:600;margin-bottom:4px}
+.review-reply-text{font-size:13px;color:#b0a0cc;line-height:1.5}
+.review-reply-time{font-size:10px;color:#5a5070;margin-top:4px}
+.review-empty{text-align:center;color:#5a5070;padding:30px;font-size:14px}
+.review-no-platform{display:none}
+
 /* input 统一 */
 input[type="date"]{background:#100c18;color:#a78bfa;border:1px solid #2d2545;border-radius:4px;padding:4px 8px;font-size:12px}
 button[onclick="renderTrend()"]{background:#7c5fc4;color:#e8e0f5;border:none;border-radius:4px;padding:4px 14px;font-size:12px;cursor:pointer}
@@ -258,6 +291,13 @@ button[onclick="renderTrend()"]{background:#7c5fc4;color:#e8e0f5;border:none;bor
   <div class="order-scroll" id="orderContainer"></div>
 </div>
 
+<div class="section" id="reviewSection" style="display:none">
+  <h2>⭐ 好评回评</h2>
+  <div class="review-platform-tabs" id="reviewPlatformTabs"></div>
+  <div class="review-stats" id="reviewStats"></div>
+  <div class="review-list" id="reviewList"></div>
+</div>
+
 <div class="footer">扬际酒店运营中心 · 门店详情</div>
 
 <script>
@@ -318,9 +358,11 @@ async function loadData() {
       hasHistory: D.hasHistory, lastYearDates: D.lastYearDates,
       hasLastYear: D.hasLastYear, lastYearWeekdays: D.lastYearWeekdays,
       collectTime: D.collectTime, today: D.today,
-      ctripCompetitors: D.ctripCompetitors || {}
+      ctripCompetitors: D.ctripCompetitors || {},
+      storeReviews: D.storeReviews || {}
     };
     renderAll();
+    renderReviews();
   } catch(e) {
     document.getElementById('storeTitle').textContent = '加载失败';
     console.error(e);
@@ -734,6 +776,118 @@ function renderOrders() {
 window.addEventListener('resize', () => { Object.values(charts).forEach(c => c && c.resize()); });
 loadData();
 setInterval(loadData, 10 * 60 * 1000);
+
+/* ============ 好评回评模块 ============ */
+let currentReviewPlatform = 'douyin';
+
+function renderReviews() {
+  const section = document.getElementById('reviewSection');
+  const allReviews = SD.storeReviews || {};
+  // 尝试多种匹配：显示名、bi_name、包含关键词
+  const storeKeys = [SD.displayName, storeBiName];
+  // 也做模糊匹配
+  Object.keys(allReviews).forEach(k => {
+    if (k.includes('阳朔') || SD.displayName.includes('阳朔') || storeBiName.includes('阳朔')) {
+      if (!storeKeys.includes(k)) storeKeys.push(k);
+    }
+  });
+
+  let reviewData = null;
+  for (const key of storeKeys) {
+    if (allReviews[key]) { reviewData = allReviews[key]; break; }
+  }
+  // 也检查是否有任何key包含阳朔
+  if (!reviewData) {
+    for (const key of Object.keys(allReviews)) {
+      if (SD.displayName.includes(key) || key.includes(SD.displayName) || storeBiName.includes(key) || key.includes(storeBiName)) {
+        reviewData = allReviews[key]; break;
+      }
+    }
+  }
+
+  if (!reviewData || Object.keys(reviewData).length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  // 平台标签
+  const platforms = Object.keys(reviewData);
+  if (!platforms.includes(currentReviewPlatform)) currentReviewPlatform = platforms[0];
+
+  const tabsHtml = platforms.map(p => {
+    const label = p === 'douyin' ? '🎵 抖音' : p === 'meituan' ? '🍊 美团' : p === 'ctrip' ? '🔵 携程' : p;
+    return `<div class="review-platform-tab${p===currentReviewPlatform?' active':''}" onclick="switchReviewPlatform('${p}',this)">${label}</div>`;
+  }).join('');
+  document.getElementById('reviewPlatformTabs').innerHTML = tabsHtml;
+
+  const reviews = reviewData[currentReviewPlatform] || [];
+
+  // 统计
+  const total = reviews.length;
+  const replied = reviews.filter(r => r.reply_status === 'replied').length;
+  const pending = reviews.filter(r => r.reply_status === 'pending' && r.rating >= 4).length;
+  const skipped = reviews.filter(r => r.reply_status === 'skipped' || (r.rating <= 3 && r.reply_status !== 'replied')).length;
+  const highRating = reviews.filter(r => r.rating >= 4).length;
+
+  document.getElementById('reviewStats').innerHTML = `
+    <div class="review-stat"><div class="rs-val">${total}</div><div class="rs-lbl">总评价</div></div>
+    <div class="review-stat"><div class="rs-val" style="color:#5cb890">${replied}</div><div class="rs-lbl">已回复</div></div>
+    <div class="review-stat"><div class="rs-val" style="color:#d4a030">${pending}</div><div class="rs-lbl">待回复(4★+)</div></div>
+    <div class="review-stat"><div class="rs-val" style="color:#6a5e82">${skipped}</div><div class="rs-lbl">差评跳过(≤3★)</div></div>
+    <div class="review-stat"><div class="rs-val">${highRating}</div><div class="rs-lbl">好评(4★+)</div></div>
+  `;
+
+  // 评价列表
+  if (!reviews.length) {
+    document.getElementById('reviewList').innerHTML = '<div class="review-empty">暂无评价数据</div>';
+    return;
+  }
+
+  const listHtml = reviews.map(r => {
+    const stars = Array.from({length:5}, (_,i) =>
+      `<span class="review-star${i<r.rating?' filled':''}">★</span>`
+    ).join('');
+
+    let statusBadge = '';
+    if (r.reply_status === 'replied') statusBadge = '<span class="reply-badge replied">✅ 已回复</span>';
+    else if (r.rating <= 3) statusBadge = '<span class="reply-badge skipped">⊘ 差评不回复</span>';
+    else statusBadge = '<span class="reply-badge pending">⏳ 待回复</span>';
+
+    let replyHtml = '';
+    if (r.reply_content) {
+      replyHtml = `<div class="review-reply">
+        <div class="review-reply-label">商家回复</div>
+        <div class="review-reply-text">${r.reply_content}</div>
+        ${r.reply_time ? '<div class="review-reply-time">' + r.reply_time + '</div>' : ''}
+      </div>`;
+    }
+
+    const initial = (r.reviewer || '用')[0];
+    return `<div class="review-card">
+      <div class="review-header">
+        <div class="review-user">
+          <div class="review-avatar">${initial}</div>
+          <span class="review-name">${r.reviewer || '匿名用户'}</span>
+          <span class="review-time">${r.review_time || ''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="review-stars">${stars}</div>
+          ${statusBadge}
+        </div>
+      </div>
+      <div class="review-content">${r.content || ''}</div>
+      <div class="review-reply-status"></div>
+      ${replyHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('reviewList').innerHTML = listHtml;
+}
+
+function switchReviewPlatform(platform, btn) {
+  currentReviewPlatform = platform;
+  document.querySelectorAll('.review-platform-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderReviews();
+}
 </script>
 </body>
 </html>
