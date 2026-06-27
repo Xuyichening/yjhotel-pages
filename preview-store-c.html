@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预览C · 沉稳商务风 - 门店详情</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#0f1419;color:#dfe6ed;padding:20px;font-size:15px;min-width:1200px}
+
+.preview-banner{background:linear-gradient(90deg,#c8a45c,#a8873a);color:#0f1419;text-align:center;padding:8px;font-weight:700;font-size:13px;position:sticky;top:0;z-index:999;border-radius:8px;margin-bottom:16px;letter-spacing:1px}
+
+/* 顶栏 */
+.header{background:linear-gradient(135deg,#1c2333 0%,#232d3f 100%);border-radius:12px;padding:18px 28px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2a3447}
+.header h1{font-size:22px;color:#dfe6ed;display:flex;align-items:center;gap:12px;font-weight:600}
+.back-link{color:#c8a45c;text-decoration:none;font-size:14px;padding:4px 12px;border:1px solid #c8a45c;border-radius:6px;white-space:nowrap;transition:all .2s}
+.back-link:hover{background:#c8a45c;color:#0f1419}
+.header .meta{font-size:12px;color:#7a8a9e;text-align:right}
+.header .meta .time{color:#c8a45c;font-size:14px;font-weight:600}
+.store-tag{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:500;margin-left:8px}
+.tag-公寓{background:rgba(200,164,92,0.12);color:#c8a45c}.tag-民宿{background:rgba(212,146,10,0.12);color:#d4920a}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#1c2333;border-radius:10px;padding:16px 20px;border:1px solid #2a3447;text-align:center;transition:border-color .2s}
+.kpi:hover{border-color:#3a4a60}
+.kpi .val{font-size:30px;font-weight:700;color:#c8a45c;letter-spacing:0.5px}
+.kpi .val.green{color:#5cb85c}.kpi .val.yellow{color:#d4920a}.kpi .val.red{color:#d9534f}
+.kpi .lbl{font-size:12px;color:#7a8a9e;margin-top:4px;letter-spacing:0.5px}
+
+/* Section */
+.section{background:#1c2333;border-radius:10px;padding:20px;margin-bottom:16px;border:1px solid #2a3447}
+.section h2{font-size:16px;color:#c8a45c;margin-bottom:12px;padding-left:10px;border-left:3px solid #c8a45c;font-weight:600;letter-spacing:0.5px}
+
+.chart-box-wide{height:260px;width:100%}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+th{background:#0f1419;padding:8px 4px;text-align:center;color:#7a8a9e;border-bottom:1px solid #2a3447;position:sticky;top:0;font-weight:500;white-space:nowrap}
+td{padding:7px 4px;text-align:center;border-bottom:1px solid #1e2a3a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr:hover{background:#1e2d3f}
+tr:nth-child(even){background:rgba(255,255,255,0.01)}
+tr:nth-child(even):hover{background:#1e2d3f}
+.good{color:#5cb85c;font-weight:600}.mid{color:#d4920a;font-weight:600}.bad{color:#d9534f;font-weight:600}.warn{color:#d4770a;font-weight:600}.none{color:#5a6a7e}
+
+/* 日期切换 */
+.date-tabs{display:flex;gap:4px;margin-bottom:12px}
+.date-tab{padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;color:#7a8a9e;background:#111820;border:1px solid #2a3447;transition:all .2s}
+.date-tab:hover{background:#1c2333;color:#dfe6ed}
+.date-tab.active{background:#c8a45c;color:#0f1419;font-weight:600;border-color:#c8a45c}
+
+/* 趋势筛选 */
+.trend-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.trend-filter-bar label{font-size:12px;color:#7a8a9e;white-space:nowrap}
+.trend-shortcuts{display:flex;gap:0;border-radius:6px;overflow:hidden;border:1px solid #2a3447}
+.trend-sc{background:#111820;color:#7a8a9e;border:none;padding:4px 14px;font-size:12px;cursor:pointer;transition:all .2s}
+.trend-sc:hover{background:#1c2333;color:#dfe6ed}
+.trend-sc.active{background:#8b6914;color:#dfe6ed}
+
+/* 订单 */
+.order-scroll{max-height:480px;overflow-y:auto;border-radius:8px;border:1px solid #2a3447}
+.order-table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.order-table thead th{position:sticky;top:0;background:#131a24;color:#c8a45c;padding:10px 12px;text-align:center;border-bottom:1px solid #2a3447;font-weight:600;white-space:nowrap}
+.order-table tbody tr{border-bottom:1px solid #1e2a3a}
+.order-table tbody tr:hover{background:#1e2d3f}
+.order-table td{padding:8px 12px;color:#8ba8c4;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.order-table .td-type{color:#b8a0d8;text-align:left}
+.order-table .td-channel{color:#8ba8c4}
+.order-table .td-fee{color:#c8a45c;font-weight:600;text-align:right}
+.order-table .td-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;display:inline-block}
+.order-table .td-status.reserved{background:#1c2333;color:#8ba8c4}
+.order-table .td-status.checkin{background:#1a2e1a;color:#5cb85c}
+.order-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.order-filter-bar select{background:#111820;color:#c8a45c;border:1px solid #2a3447;border-radius:4px;padding:4px 8px;font-size:12px}
+.order-filter-bar label{font-size:12px;color:#7a8a9e}
+
+/* 预警 */
+.alert-dates{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.alert-date-section{background:#131a24;border-radius:10px;padding:12px;border:1px solid #2a3447}
+.alert-date-title{font-size:14px;font-weight:700;color:#c8a45c;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2a3447}
+.alert-date-title .alert-count{font-size:11px;background:rgba(200,164,92,0.12);color:#c8a45c;padding:1px 6px;border-radius:10px;margin-left:6px}
+.alert-date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.alert-item{background:#0f1419;border-radius:8px;padding:12px;border-left:3px solid #4a5568}
+.alert-item.surge{border-left-color:#d9534f}.alert-item.trend{border-left-color:#9c7cff}
+.alert-item.lowprice{border-left-color:#d4920a}.alert-item.stall{border-left-color:#4a5568}
+.alert-rule{font-size:11px;padding:1px 6px;border-radius:3px;font-weight:500;margin-right:4px}
+.alert-rule.surge{background:#2a1a1a;color:#d9534f}.alert-rule.trend{background:#1a1a2a;color:#9c7cff}
+.alert-rule.lowprice{background:#2a2210;color:#d4920a}.alert-rule.stall{background:#1c2333;color:#7a8a9e}
+.alert-store{font-size:14px;font-weight:600;color:#c8a45c}
+.alert-detail{font-size:13px;color:#8ba8c4;margin-top:4px}
+.alert-occ{font-size:12px;color:#7a8a9e;margin-top:2px}
+.alert-action{font-size:12px;color:#b8a0d8;margin-top:6px;padding-top:6px;border-top:1px solid #2a3447}
+
+/* 收益建议 */
+.advice-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.advice-filter-bar select{background:#111820;color:#c8a45c;border:1px solid #2a3447;border-radius:4px;padding:4px 8px;font-size:12px}
+.advice-filter-bar label{font-size:12px;color:#7a8a9e;white-space:nowrap}
+.advice-card{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px}
+.adv-item{background:#0f1419;border-radius:8px;padding:0;border-left:3px solid #4a5568;overflow:hidden}
+.adv-item.good{border-left-color:#5cb85c}.adv-item.mid{border-left-color:#d4920a}
+.adv-item.bad{border-left-color:#d9534f}.adv-item.warn{border-left-color:#d4770a}
+.adv-header{padding:8px 12px;font-size:14px;font-weight:700;color:#c8a45c;border-bottom:1px solid #2a3447}
+.adv-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.adv-tag{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:500}
+.adv-tag.weekend{background:#2a2210;color:#d4920a}
+.adv-tag.urgent{background:#2a1a1a;color:#d9534f}
+.adv-tag.inventory{background:#1c2333;color:#8ba8c4}
+.adv-top{padding:8px 12px;font-size:14px;font-weight:700;line-height:1.5}
+.adv-top.good{background:rgba(92,184,92,0.1);color:#5cb85c}
+.adv-top.mid{background:rgba(212,146,10,0.1);color:#d4920a}
+.adv-top.bad{background:rgba(217,83,79,0.1);color:#d9534f}
+.adv-top.warn{background:rgba(212,119,10,0.1);color:#d4770a}
+.adv-top.none{background:rgba(90,106,126,0.1);color:#5a6a7e}
+.adv-top .adv-action-text{font-size:12px;font-weight:400;color:#8ba8c4;margin-top:2px;line-height:1.4}
+.adv-body{padding:8px 12px}
+.adv-channel{margin-bottom:6px;padding:4px 8px;background:rgba(255,255,255,0.02);border-radius:4px;font-size:11px}
+.adv-channel .ch-label{color:#b8a0d8;font-weight:500}
+.adv-channel-items{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:3px}
+.adv-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1c2333;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.adv-metric-cell{background:#0f1419;padding:3px 6px;font-size:11px;color:#7a8a9e;display:flex;justify-content:space-between;align-items:center;gap:2px}
+.adv-metric-cell .metric-val{color:#dfe6ed;font-weight:500}
+.adv-compare{font-size:11px;color:#7a8a9e;margin-top:4px;display:flex;flex-wrap:wrap;gap:2px 8px}
+.adv-compare .cmp-up{color:#5cb85c}.adv-compare .cmp-dn{color:#d9534f}
+
+/* 竞对 */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:12px}
+.comp-card{background:#131a24;border-radius:8px;padding:12px;border:1px solid #2a3447}
+.comp-card-title{font-size:14px;font-weight:700;color:#c8a45c;margin-bottom:8px}
+.comp-card-title .comp-icon{margin-right:4px}
+.comp-prices{display:flex;flex-wrap:wrap;gap:6px}
+.comp-item{background:#0f1419;padding:4px 10px;border-radius:4px;font-size:13px;color:#dfe6ed}
+.comp-item .comp-name{color:#8ba8c4;margin-right:4px}
+.comp-item.full{color:#5cb85c}
+
+.bc-filter-bar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.bc-filter-bar select{background:#111820;color:#c8a45c;border:1px solid #2a3447;border-radius:4px;padding:4px 8px;font-size:12px}
+.bc-filter-bar label{font-size:12px;color:#7a8a9e;white-space:nowrap}
+.bc-metric-toggle{display:flex;gap:0;border-radius:6px;overflow:hidden;border:1px solid #2a3447}
+.bc-btn{background:#111820;color:#7a8a9e;border:none;padding:4px 14px;font-size:12px;cursor:pointer;transition:all .2s}
+.bc-btn:hover{background:#1c2333;color:#dfe6ed}
+.bc-btn.active{background:#8b6914;color:#dfe6ed}
+.bc-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px}
+.bc-stat{background:#0f1419;border-radius:6px;padding:8px 12px;border-left:3px solid #4a5568}
+.bc-stat .bc-stat-val{font-size:18px;font-weight:700;color:#c8a45c}
+.bc-stat .bc-stat-lbl{font-size:11px;color:#7a8a9e;margin-top:2px}
+
+.empty-state{text-align:center;color:#4a5568;padding:40px;font-size:14px}
+.footer{text-align:center;color:#4a5568;font-size:11px;padding:12px;margin-top:8px;letter-spacing:0.5px}
+
+/* input 统一 */
+input[type="date"]{background:#111820;color:#c8a45c;border:1px solid #2a3447;border-radius:4px;padding:4px 8px;font-size:12px}
+button[onclick="renderTrend()"]{background:#8b6914;color:#dfe6ed;border:none;border-radius:4px;padding:4px 14px;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">🎨 预览C · 沉稳商务风 — 深墨底 + 香槟金 + 低饱和统一色系</div>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="preview-c.html" class="back-link">← 返回</a>
+    <h1 id="storeTitle">加载中...</h1>
+  </div>
+  <div class="meta">
+    <div class="time" id="collectTime"></div>
+    <div>数据来源：云掌柜PMS via bi.yjhotel.xyz</div>
+  </div>
+</div>
+
+<div class="kpi-row" id="kpiRow"></div>
+<div class="date-tabs" id="dateTabs"></div>
+
+<div class="section">
+  <h2>入住率 & 营收趋势</h2>
+  <div class="trend-filter-bar">
+    <label>日期范围:</label>
+    <input type="date" id="trendStart">
+    <span style="color:#4a5568">~</span>
+    <input type="date" id="trendEnd">
+    <div class="trend-shortcuts">
+      <button class="trend-sc active" onclick="setTrendRange(7,this)">7天</button>
+      <button class="trend-sc" onclick="setTrendRange(14,this)">14天</button>
+      <button class="trend-sc" onclick="setTrendRange(30,this)">30天</button>
+    </div>
+    <button onclick="renderTrend()">查询</button>
+    <span id="trendSource" style="font-size:11px;color:#4a5568;margin-left:8px"></span>
+  </div>
+  <div id="trendChart" class="chart-box-wide" style="height:300px"></div>
+</div>
+
+<div class="section">
+  <h2 id="roomTitle">门店房型详情</h2>
+  <div style="overflow-x:auto"><table id="roomTable"></table></div>
+</div>
+
+<div class="section" id="compSection" style="display:none">
+  <h2>⚡ 竞对引流价（携程系参考）</h2>
+  <div id="compContainer"></div>
+</div>
+
+<div class="section">
+  <h2>🚨 预定趋势预警</h2>
+  <div id="alertContainer"></div>
+</div>
+
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <h2 style="margin:0">收益分析建议</h2>
+    <div class="advice-filter-bar" style="margin:0">
+      <label>建议:</label>
+      <select id="advLevelFilter" onchange="renderAdvice()">
+        <option value="all">全部</option>
+        <option value="good">🟢 涨价</option>
+        <option value="bad">🔴 降价</option>
+        <option value="mid">🟡 维持</option>
+        <option value="warn">⚠️ 未定价</option>
+      </select>
+    </div>
+  </div>
+  <div id="adviceContainer" class="advice-card"></div>
+</div>
+
+<div class="section">
+  <h2>预售周期分析</h2>
+  <div class="bc-filter-bar">
+    <label>入住日期:</label>
+    <select id="bcDateFilter" onchange="renderBookingCycle()"></select>
+    <label>渠道:</label>
+    <select id="bcChannelFilter" onchange="renderBookingCycle()">
+      <option value="">全部渠道</option>
+    </select>
+    <div class="bc-metric-toggle">
+      <button class="bc-btn active" onclick="switchBcMetric('count',this)">订单数</button>
+      <button class="bc-btn" onclick="switchBcMetric('revenue',this)">营收</button>
+    </div>
+  </div>
+  <div id="bcChart" class="chart-box-wide"></div>
+  <div class="bc-summary" id="bcSummary"></div>
+</div>
+
+<div class="section">
+  <h2>来单与入住动态</h2>
+  <div class="order-filter-bar">
+    <label>入住日期:</label>
+    <select id="orderDateFilter" onchange="renderOrders()">
+      <option value="today">今日</option>
+      <option value="7d">近7天</option>
+      <option value="all">全部</option>
+    </select>
+    <label>渠道:</label>
+    <select id="orderChannelFilter" onchange="renderOrders()">
+      <option value="">全部渠道</option>
+    </select>
+    <label>状态:</label>
+    <select id="orderStatusFilter" onchange="renderOrders()">
+      <option value="">全部</option>
+      <option value="checkin">已入住</option>
+      <option value="reserved">已预订</option>
+    </select>
+  </div>
+  <div class="order-scroll" id="orderContainer"></div>
+</div>
+
+<div class="footer">扬际酒店运营中心 · 门店详情</div>
+
+<script>
+const NAME_MAP = { '白象街5店': '白象街旗舰店' };
+function displayName(name) { return NAME_MAP[name] || name; }
+
+let D = null;
+let SD = null;
+let storeBiName = '';
+let selectedDayIdx = 0;
+let bcMetric = 'count';
+const charts = {};
+
+function getStoreName() {
+  return decodeURIComponent(new URLSearchParams(location.search).get('name') || '');
+}
+
+function getStoreData(storeName) {
+  const dn = displayName(storeName);
+  const matrix = (D.storeMatrix || []).find(s =>
+    s.bi_name === storeName || displayName(s.bi_name) === dn
+  );
+  const rooms = D.storeRoomDetails?.[storeName] || [];
+  const orders = (D.recentOrders || []).filter(o =>
+    o.store === storeName || displayName(o.store) === dn
+  );
+  const cycle = (D.bookingCycleData || []).filter(o =>
+    o.store === storeName || displayName(o.store) === dn
+  );
+  const alerts = (D.bookingAlerts || []).filter(a =>
+    a.store === storeName || displayName(a.store) === dn
+  );
+  const advice = (D.revenueAdvice || []).filter(a =>
+    a.store === storeName || displayName(a.store) === dn
+  );
+  return { matrix, rooms, orders, cycle, alerts, advice, displayName: dn };
+}
+
+async function loadData() {
+  const name = getStoreName();
+  if (!name) { document.getElementById('storeTitle').textContent = '缺少门店参数'; return; }
+  try {
+    const r = await fetch('data.json?t=' + Date.now());
+    D = await r.json();
+    const matched = (D.storeMatrix || []).find(s => displayName(s.bi_name) === name);
+    storeBiName = matched ? matched.bi_name : name;
+    const sd = getStoreData(storeBiName);
+    if (!sd.matrix) { document.getElementById('storeTitle').textContent = name + ' - 未找到数据'; return; }
+    SD = {
+      store: sd.matrix, displayName: sd.displayName, rooms: sd.rooms,
+      recentOrders: sd.orders, bookingCycleData: sd.cycle,
+      alerts: sd.alerts, advice: sd.advice,
+      groupOccupancy: D.groupOccupancy, groupAvgPrice: D.groupAvgPrice,
+      totalRooms: D.totalRooms, totalOccupied: D.totalOccupied, totalRevenue: D.totalRevenue,
+      trendDates: D.trendDates, trendRates: D.trendRates,
+      focusDates: D.focusDates, focusLabels: D.focusLabels,
+      lastWeekDates: D.lastWeekDates, lastWeekLabels: D.lastWeekLabels,
+      hasHistory: D.hasHistory, lastYearDates: D.lastYearDates,
+      hasLastYear: D.hasLastYear, lastYearWeekdays: D.lastYearWeekdays,
+      collectTime: D.collectTime, today: D.today,
+      ctripCompetitors: D.ctripCompetitors || {}
+    };
+    renderAll();
+  } catch(e) {
+    document.getElementById('storeTitle').textContent = '加载失败';
+    console.error(e);
+  }
+}
+
+function occClass(v) { return v > 70 ? 'good' : v > 50 ? 'mid' : 'bad'; }
+function fmtRev(n) { return n == null ? '—' : '¥' + n.toLocaleString('zh-CN',{maximumFractionDigits:0}); }
+
+function renderAll() {
+  const s = SD.store;
+  document.getElementById('storeTitle').innerHTML = SD.displayName + '<span class="store-tag tag-' + s.type + '">' + s.type + '</span>';
+  document.title = SD.displayName + ' · 扬际酒店';
+  document.getElementById('collectTime').textContent = '数据采集: ' + SD.collectTime;
+  renderKPI();
+  renderDateTabs();
+  setTrendRange(7, document.querySelector('.trend-sc'));
+  renderRooms();
+  renderCompetitors();
+  populateBookingFilters();
+  populateOrderFilters();
+  renderAlerts();
+  renderAdvice();
+}
+
+function renderKPI() {
+  const s = SD.store;
+  const d = selectedDayIdx;
+  const occ = s['day' + d + '_occ'];
+  const rev = s['day' + d + '_revenue'];
+  const sold = s['day' + d + '_sold'];
+  const total = s['day' + d + '_total'];
+  const avg = s['day' + d + '_sold_avg'];
+  const cls = occClass(occ);
+  const kpis = [
+    { val: total, lbl: '总房量', cls: '' },
+    { val: sold, lbl: '已售', cls: cls === 'bad' ? 'red' : cls === 'mid' ? 'yellow' : 'green' },
+    { val: occ + '%', lbl: '入住率', cls: cls },
+    { val: fmtRev(rev), lbl: '营收', cls: '' },
+    { val: '¥' + (avg||0), lbl: '已售均价', cls: '' }
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(k =>
+    `<div class="kpi"><div class="val ${k.cls}">${k.val}</div><div class="lbl">${k.lbl}</div></div>`
+  ).join('');
+}
+
+function renderDateTabs() {
+  const labels = SD.focusLabels || ['今天','明天','后天','大后天'];
+  const dates = SD.focusDates || [];
+  let html = '';
+  labels.forEach((l, i) => {
+    const sub = dates[i] ? dates[i].substring(5) : '';
+    html += `<div class="date-tab${i===selectedDayIdx?' active':''}" onclick="selectDay(${i})">${l}<br><span style="font-size:11px;color:#4a5568">${sub}</span></div>`;
+  });
+  document.getElementById('dateTabs').innerHTML = html;
+}
+
+function selectDay(idx) {
+  selectedDayIdx = idx;
+  renderDateTabs();
+  renderKPI();
+  renderRooms();
+}
+
+function fmtDate(d) { return d.toISOString().substring(0,10); }
+
+function setTrendRange(days, btn) {
+  if (!SD) return;
+  const today = new Date(SD.today);
+  const end = new Date(today);
+  end.setDate(end.getDate() + 3);
+  const start = new Date(end);
+  start.setDate(start.getDate() - days + 1);
+  document.getElementById('trendStart').value = fmtDate(start);
+  document.getElementById('trendEnd').value = fmtDate(end);
+  document.querySelectorAll('.trend-sc').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTrend();
+}
+
+function renderTrend() {
+  if (!SD || !storeBiName) return;
+  const startDate = document.getElementById('trendStart').value;
+  const endDate = document.getElementById('trendEnd').value;
+  if (!startDate || !endDate) return;
+
+  const matrix = SD.store;
+  const totalRooms = matrix.day0_total;
+  const focusDates = D.focusDates || [];
+  const cycleData = SD.bookingCycleData || [];
+
+  const dates = [];
+  const d = new Date(startDate);
+  while (d.toISOString().substring(0,10) <= endDate) {
+    dates.push(d.toISOString().substring(0,10));
+    d.setDate(d.getDate() + 1);
+  }
+
+  const items = dates.map(dt => {
+    const focusIdx = focusDates.indexOf(dt);
+    if (focusIdx >= 0 && focusIdx <= 3) {
+      return { date: dt, occ: matrix['day'+focusIdx+'_occ'], revenue: matrix['day'+focusIdx+'_revenue'], sold: matrix['day'+focusIdx+'_sold'], available: matrix['day'+focusIdx+'_available'], total: matrix['day'+focusIdx+'_total'], sold_avg: matrix['day'+focusIdx+'_sold_avg'], source: 'storeMatrix' };
+    }
+    const dayOrders = cycleData.filter(o => o.checkin_date === dt);
+    if (dayOrders.length === 0) return { date: dt, occ: null, revenue: 0, sold: 0, available: totalRooms, total: totalRooms, sold_avg: 0, source: 'none' };
+    const sold = dayOrders.reduce((s,o) => s + (o.nights||1), 0);
+    const revenue = dayOrders.reduce((s,o) => s + (o.room_fee||0), 0);
+    const occ = totalRooms > 0 ? Math.round(sold/totalRooms*1000)/10 : 0;
+    const avg = sold > 0 ? Math.round(revenue/sold) : 0;
+    return { date: dt, occ, revenue: Math.round(revenue*100)/100, sold, available: totalRooms-sold, total: totalRooms, sold_avg: avg, source: 'bookingCycle' };
+  });
+
+  const labels = items.map(d => {
+    const weekday = ['日','一','二','三','四','五','六'][new Date(d.date).getDay()];
+    return (d.date === SD.today ? '今天\n' : '') + d.date.substring(5) + '\n周' + weekday;
+  });
+
+  const matrixCount = items.filter(d => d.source === 'storeMatrix').length;
+  const cycleCount = items.filter(d => d.source === 'bookingCycle').length;
+  const noneCount = items.filter(d => d.source === 'none').length;
+  let srcText = '';
+  if (matrixCount) srcText += matrixCount + '天精确数据';
+  if (cycleCount) srcText += (srcText?' · ':'') + cycleCount + '天订单推算';
+  if (noneCount) srcText += (srcText?' · ':'') + noneCount + '天无数据';
+  document.getElementById('trendSource').textContent = srcText;
+
+  const chart = echarts.init(document.getElementById('trendChart'));
+  charts.trend = chart;
+  const barW = items.length <= 10 ? 36 : items.length <= 20 ? 20 : 8;
+  chart.setOption({
+    tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#2a3447',textStyle:{color:'#dfe6ed'},formatter:function(params){
+      const i = params[0].dataIndex;
+      const d = items[i];
+      let s = labels[i].replace(/\n/g,' ') + '<br/>';
+      s += '入住率: <b>' + (d.occ!=null?d.occ+'%':'—') + '</b><br/>';
+      s += '营收: <b>¥' + Math.round(d.revenue).toLocaleString() + '</b><br/>';
+      s += '已售: ' + d.sold + '/' + d.total + '间<br/>';
+      s += '均价: ¥' + d.sold_avg;
+      if(d.source==='bookingCycle') s += '<br/><span style="color:#d4920a;font-size:11px">⚠ 数据来自订单推算</span>';
+      return s;
+    }},
+    legend:{data:['入住率','营收','已售间夜'],textStyle:{color:'#7a8a9e'}},
+    xAxis:{type:'category',data:labels,axisLabel:{color:'#7a8a9e',fontSize:11},axisLine:{lineStyle:{color:'#2a3447'}},axisTick:{show:false}},
+    yAxis:[
+      {type:'value',max:100,axisLabel:{color:'#7a8a9e',formatter:'{value}%',fontSize:11},splitLine:{lineStyle:{color:'#1e2a3a',type:'dashed'}},axisLine:{show:false},axisTick:{show:false}},
+      {type:'value',axisLabel:{color:'#c8a45c',formatter:function(v){return v>=10000?(v/10000).toFixed(1)+'万':'¥'+v}},splitLine:{show:false}}
+    ],
+    series:[
+      {name:'入住率',type:'bar',data:items.map(d=>d.occ),yAxisIndex:0,itemStyle:{color:function(p){const d=items[p.dataIndex];return d.source==='storeMatrix'?new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#c8a45c'},{offset:1,color:'#8b6914'}]):new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#9c7cff'},{offset:1,color:'#5a3fa0'}])}},barWidth:barW,
+        label:{show:items.length<=15,formatter:p=>p.value!=null?p.value+'%':'',color:'#c8a45c',fontSize:10,position:'top'}},
+      {name:'营收',type:'line',data:items.map(d=>d.revenue),yAxisIndex:1,smooth:true,lineStyle:{color:'#c8a45c',width:2},itemStyle:{color:'#c8a45c'},symbol:'circle',symbolSize:6,
+        label:{show:items.length<=10,formatter:p=>'¥'+Math.round(p.value).toLocaleString(),color:'#c8a45c',fontSize:9,position:'top'}},
+      {name:'已售间夜',type:'line',data:items.map(d=>d.sold),yAxisIndex:1,smooth:true,lineStyle:{color:'#5cb85c',width:1,type:'dashed'},itemStyle:{color:'#5cb85c'},symbol:'diamond',symbolSize:4}
+    ],
+    grid:{left:50,right:60,top:40,bottom:40},
+    dataZoom: items.length > 14 ? [{type:'inside',start:0,end:100}] : undefined
+  }, true);
+}
+
+function renderRooms() {
+  const rooms = SD.rooms || [];
+  if (!rooms.length) { document.getElementById('roomTable').innerHTML = '<tr><td colspan="99" class="empty-state">暂无房源数据</td></tr>'; return; }
+  const d = selectedDayIdx;
+  const date = (SD.focusDates||[])[d] || '';
+  document.getElementById('roomTitle').textContent = SD.displayName + ' · ' + (SD.focusLabels||[])[d] + '(' + date.substring(5) + ') 房型详情';
+
+  const hasH = SD.hasHistory && SD.hasHistory[SD.focusDates[d]];
+  const hasLY = SD.hasLastYear && SD.hasLastYear[SD.focusDates[d]];
+  const lyDateStr = SD.lastYearDates ? SD.lastYearDates[d].substring(2) : '';
+  const lwLabel = SD.lastWeekLabels ? SD.lastWeekLabels[d] : '';
+  const lyWd = SD.lastYearWeekdays ? SD.lastYearWeekdays[d] : '';
+
+  let html = '<thead><tr><th style="text-align:left">房型</th><th>类别</th><th>总间夜</th><th>已售间夜</th><th>待售间夜</th><th>入住率</th><th>已售均价</th><th>待售均价</th>';
+  if(hasH) html += '<th>上周' + lwLabel + '均价</th><th>环比</th>';
+  if(hasLY) html += '<th>去年' + lyDateStr + '均价<br><span style="font-weight:400;color:#b8a0d8;font-size:10px">' + lyWd + '</span></th><th>同比</th>';
+  html += '<th style="text-align:left">渠道</th></tr></thead><tbody>';
+
+  rooms.forEach(r => {
+    const occ = r['day'+d+'_occ_rate'];
+    const occCls = occClass(occ);
+    const soldAvg = r['day'+d+'_sold_avg'] || 0;
+    const availAvg = r['day'+d+'_available_avg'] || 0;
+    const lwAvg = r['day'+d+'_lw_sold_avg'] || 0;
+    const lyAvg = r['day'+d+'_ly_sold_avg'] || 0;
+    const available = r['day'+d+'_available'];
+    const locked = r['day'+d+'_locked'] || 0;
+
+    html += `<tr>
+      <td style="text-align:left;white-space:normal;color:#c8a45c;font-weight:500">${r.name}</td>
+      <td>${r.category||''}</td>
+      <td>${r['day'+d+'_total']}</td>
+      <td class="good">${r['day'+d+'_sold']}</td>
+      <td>${available > 0 ? available : '<span class="good">满房</span>'}</td>`;
+    if(locked > 0) {
+      html += `<td class="${occCls}">${occ}%<br><span style="font-size:11px;color:#d4920a">🔒${locked}间</span></td>`;
+    } else {
+      html += `<td class="${occCls}">${occ}%</td>`;
+    }
+    html += `<td>${soldAvg>0?'¥'+soldAvg:'—'}</td>`;
+    if(available === 0) {
+      html += `<td><span class="good">满房</span></td>`;
+    } else {
+      html += `<td>${availAvg>0?'¥'+availAvg:'<span class="warn">未设置</span>'}</td>`;
+    }
+    if(hasH) {
+      if(lwAvg > 0 && soldAvg > 0) {
+        const change = Math.round((soldAvg - lwAvg)/lwAvg*100);
+        const changeCls = change > 0 ? 'good' : 'bad';
+        html += `<td>¥${lwAvg}</td><td class="${changeCls}">${change>0?'+':''}${change}%</td>`;
+      } else { html += `<td>—</td><td>—</td>`; }
+    }
+    if(hasLY) {
+      if(lyAvg > 0 && soldAvg > 0) {
+        const yoyChange = Math.round((soldAvg - lyAvg)/lyAvg*100);
+        const yoyCls = yoyChange > 0 ? 'good' : 'bad';
+        html += `<td>¥${lyAvg}</td><td class="${yoyCls}">${yoyChange>0?'+':''}${yoyChange}%</td>`;
+      } else { html += `<td>—</td><td>—</td>`; }
+    }
+    html += `<td style="text-align:left;font-size:11px;color:#8ba8c4;max-width:220px;overflow:hidden;text-overflow:ellipsis">${r['day'+d+'_channels']||''}</td></tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('roomTable').innerHTML = html;
+}
+
+function renderCompetitors() {
+  const comps = SD.ctripCompetitors[SD.displayName] || SD.ctripCompetitors[storeBiName] || [];
+  if (!comps.length) { document.getElementById('compSection').style.display = 'none'; return; }
+  document.getElementById('compSection').style.display = '';
+  let html = '<div class="comp-prices">';
+  comps.forEach(c => {
+    if(c.status === 'full') html += `<span class="comp-item full"><span class="comp-name">${c.short_name}</span>满房</span>`;
+    else if(c.status === 'no_price') html += `<span class="comp-item" style="color:#5a6a7e"><span class="comp-name">${c.short_name}</span>暂无报价</span>`;
+    else html += `<span class="comp-item"><span class="comp-name">${c.short_name}</span>¥${c.drainage_price}${c.original_price?' <span style="font-size:11px;color:#5a6a7e;text-decoration:line-through">¥'+Math.round(c.original_price)+'</span>':''}</span>`;
+  });
+  html += '</div>';
+  document.getElementById('compContainer').innerHTML = html;
+}
+
+function renderAlerts() {
+  const alerts = SD.alerts || [];
+  const container = document.getElementById('alertContainer');
+  if(!alerts.length) { container.innerHTML = '<div class="empty-state">✅ 当前无预警触发 — 所有房型运行正常</div>'; return; }
+  const dates = SD.focusDates || [];
+  const labels = SD.focusLabels || [];
+  const grouped = {};
+  dates.forEach((dt,i) => { grouped[dt] = {label: labels[i], items: []}; });
+  alerts.forEach(a => { if(grouped[a.date]) grouped[a.date].items.push(a); else grouped[a.date] = {label: a.date_label || a.date, items: [a]}; });
+  const weekdays = ['日','一','二','三','四','五','六'];
+  let html = '<div class="alert-dates">';
+  dates.forEach(dt => {
+    const g = grouped[dt]; if(!g) return;
+    const count = g.items.length;
+    const dateSub = dt.substring(5);
+    const wd = weekdays[new Date(dt).getDay()];
+    html += `<div class="alert-date-section"><div class="alert-date-title">${g.label}(${dateSub} 周${wd})${count > 0 ? '<span class="alert-count">'+count+'条</span>' : '<span class="alert-count" style="background:#1c2333;color:#4a5568">0条</span>'}</div>`;
+    if(count === 0) html += '<div style="color:#3a4a5a;font-size:13px;padding:8px 0;text-align:center">✅ 运行正常</div>';
+    else {
+      html += '<div class="alert-date-grid">';
+      g.items.forEach(a => {
+        const levels = a.levels || [a.level];
+        const ruleNames = (a.rule||'').split(' · ');
+        const ruleIcons = (a.rule_icon||'').split(' ');
+        let ruleTags = '';
+        for(let i=0;i<ruleNames.length;i++){ const lv = levels[i] || a.level; ruleTags += '<span class="alert-rule '+lv+'">'+(ruleIcons[i]||'')+' '+ruleNames[i]+'</span> '; }
+        html += `<div class="alert-item ${a.level}"><div class="alert-store">${ruleTags}${a.room_type||''}</div>`;
+        if(a.level === 'trend') html += `<div class="alert-detail">${a.detail||''}</div>`;
+        else { html += `<div class="alert-occ">入住率: ${a.occ||0}% | 已售${a.sold||0}间 | 待售${a.available||0}间 | 总库存${a.total||0}间</div><div class="alert-detail">${a.detail||''}</div>`; }
+        html += `<div class="alert-action">${a.action||''}</div></div>`;
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderAdvice() {
+  const levelFilter = document.getElementById('advLevelFilter').value;
+  let advice = SD.advice || [];
+  const d = selectedDayIdx;
+  const currentDate = (SD.focusDates||[])[d] || '';
+  advice = advice.filter(a => { if(a.date && a.date !== currentDate) return false; if(levelFilter !== 'all' && a.level !== levelFilter) return false; return true; });
+  if(!advice.length) { document.getElementById('adviceContainer').innerHTML = '<div class="empty-state">暂无收益建议</div>'; return; }
+  let html = '';
+  advice.forEach(a => {
+    const level = a.level || 'none';
+    const dateTag = '<span style="background:rgba(200,164,92,0.1);color:#c8a45c;padding:1px 6px;border-radius:3px;font-size:10px;margin-right:4px">' + (a.date_label||'') + '(' + (a.date||'').substring(5) + ')</span>';
+    html += `<div class="adv-item ${level}"><div class="adv-header">${dateTag}${a.room_type||''}`;
+    let tags = '';
+    const tierColors = {'A':'#2e7d32','B':'#1565c0','C':'#e65100'};
+    if(a.tier) tags += '<span class="adv-tag" style="background:'+tierColors[a.tier]+'33;color:'+tierColors[a.tier]+';border:1px solid '+tierColors[a.tier]+'66">'+a.tier+'层</span>';
+    if(a.is_weekend) tags += '<span class="adv-tag weekend">周末</span>';
+    if(a.urgency === '今日') tags += '<span class="adv-tag urgent">今日入住</span>';
+    if(a.time_segment) { const segColors = {'远期':'#7a8a9e','近期':'#5c6bc0','当天上午':'#d4920a','当天下午':'#d4770a','当天晚间':'#d9534f'}; const segColor = segColors[a.time_segment] || '#7a8a9e'; tags += '<span class="adv-tag" style="background:'+segColor+'22;color:'+segColor+';border:1px solid '+segColor+'55">'+a.time_segment+'</span>'; }
+    if(a.inventory_level === '紧张') tags += '<span class="adv-tag inventory">库存紧张</span>';
+    else if(a.inventory_level === '充裕') tags += '<span class="adv-tag inventory">库存充裕</span>';
+    if(a.demand_trend === 'hot') tags += '<span class="adv-tag" style="background:#d9534f22;color:#d9534f;border:1px solid #d9534f55">需求旺盛</span>';
+    else if(a.demand_trend === 'slow') tags += '<span class="adv-tag" style="background:#7a8a9e22;color:#7a8a9e;border:1px solid #7a8a9e55">需求疲软</span>';
+    if(tags) html += '<div class="adv-tags">'+tags+'</div>';
+    html += '</div><div class="adv-top '+level+'">'+(a.advice||a.action||'')+'<div class="adv-action-text">'+(a.action||'')+'</div></div><div class="adv-body">';
+    if(a.channel_analysis && a.channel_analysis.length > 0) {
+      html += '<div class="adv-channel"><span class="ch-label">📊 渠道溢价</span><div class="adv-channel-items">';
+      a.channel_analysis.forEach(c => { const lvlColor = c.premium_level==='high' ? '#5cb85c' : (c.premium_level==='low' ? '#d9534f' : '#d4920a'); const arrow = c.premium_rate > 0 ? '↑' : (c.premium_rate < 0 ? '↓' : '→'); const badge = c.premium_level==='high' ? '高溢价' : (c.premium_level==='low' ? '低溢价' : '平价'); html += '<span style="color:'+lvlColor+'">'+c.channel+' ¥'+c.avg_price+'('+arrow+Math.abs(c.premium_rate)+'% '+badge+' '+c.count+'间)</span>'; });
+      html += '</div></div>';
+    }
+    const availStr = a.available==0 ? '<span class="metric-val" style="color:#5cb85c">满房</span>' : (a.available_avg>0?'¥'+a.available_avg:'<span style="color:#d4770a">未设置</span>');
+    html += '<div class="adv-metrics">';
+    html += '<div class="adv-metric-cell">入住率<span class="metric-val">'+a.occ+'%</span></div>';
+    html += '<div class="adv-metric-cell">售出<span class="metric-val">'+a.sold+'/'+a.total+'间</span></div>';
+    html += '<div class="adv-metric-cell">空房<span class="metric-val">'+a.available+'间</span></div>';
+    html += '<div class="adv-metric-cell">已售<span class="metric-val">'+(a.sold_avg>0?'¥'+a.sold_avg:'—')+'</span></div>';
+    html += '<div class="adv-metric-cell">待售<span class="metric-val">'+availStr+'</span></div>';
+    if(a.region_avg>0) html += '<div class="adv-metric-cell">区域<span class="metric-val">¥'+a.region_avg+'</span></div>';
+    if(a.lw_sold_avg>0) html += '<div class="adv-metric-cell">上周<span class="metric-val">¥'+a.lw_sold_avg+'</span></div>';
+    if(a.ly_sold_avg>0) html += '<div class="adv-metric-cell">去年<span class="metric-val">¥'+a.ly_sold_avg+'</span></div>';
+    html += '</div>';
+    if(a.lw_change || a.ly_change) {
+      html += '<div class="adv-compare">';
+      if(a.lw_change != null && a.lw_change !== 0) html += '<span class="'+(a.lw_change>0?'cmp-up':'cmp-dn')+'">环比'+(a.lw_change>0?'+':'')+a.lw_change+'%</span>';
+      if(a.ly_change != null && a.ly_change !== 0) html += '<span class="'+(a.ly_change>0?'cmp-up':'cmp-dn')+'">同比'+(a.ly_change>0?'+':'')+a.ly_change+'%</span>';
+      html += '</div>';
+    }
+    html += '</div></div>';
+  });
+  document.getElementById('adviceContainer').innerHTML = html;
+}
+
+function populateBookingFilters() {
+  const data = SD.bookingCycleData || [];
+  const dates = [...new Set(data.map(d => d.checkin_date))].sort();
+  const sel = document.getElementById('bcDateFilter');
+  sel.innerHTML = '<option value="">全部日期</option>' + dates.map(d => `<option value="${d}">${d}</option>`).join('');
+  const channels = [...new Set(data.map(d => d.channel))].sort();
+  const csel = document.getElementById('bcChannelFilter');
+  csel.innerHTML = '<option value="">全部渠道</option>' + channels.map(c => `<option value="${c}">${c}</option>`).join('');
+  renderBookingCycle();
+}
+
+function switchBcMetric(m, btn) {
+  bcMetric = m;
+  document.querySelectorAll('.bc-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBookingCycle();
+}
+
+function renderBookingCycle() {
+  let data = SD.bookingCycleData || [];
+  const dateFilter = document.getElementById('bcDateFilter').value;
+  const channelFilter = document.getElementById('bcChannelFilter').value;
+  if (dateFilter) data = data.filter(d => d.checkin_date === dateFilter);
+  if (channelFilter) data = data.filter(d => d.channel === channelFilter);
+  const groups = {};
+  data.forEach(d => { const cat = d.lead_category || '未知'; if (!groups[cat]) groups[cat] = { count: 0, revenue: 0, rooms: 0, avg_price: 0, total_price: 0 }; groups[cat].count++; groups[cat].revenue += d.room_fee || 0; groups[cat].rooms += d.nights || 1; groups[cat].total_price += d.room_fee || 0; });
+  Object.values(groups).forEach(g => { g.avg_price = g.rooms > 0 ? Math.round(g.total_price / g.rooms) : 0; });
+  const catOrder = ['当天上午','当天下午','当天中午','当天夜间','提前一天','提前两天','提前三天','提前一周','提前半月以上'];
+  const cats = catOrder.filter(c => groups[c]);
+  Object.keys(groups).forEach(c => { if (!catOrder.includes(c) && !cats.includes(c)) cats.push(c); });
+  const chartData = cats.map(c => bcMetric === 'count' ? groups[c].count : (bcMetric === 'revenue' ? Math.round(groups[c].revenue) : groups[c].avg_price));
+  const chart = echarts.init(document.getElementById('bcChart'));
+  charts.bc = chart;
+  chart.setOption({
+    tooltip:{trigger:'axis',backgroundColor:'#1c2333',borderColor:'#2a3447',textStyle:{color:'#dfe6ed'},formatter:p=>p[0].name+'<br/>'+(bcMetric==='count'?'订单数: <b>'+p[0].value+'</b>':(bcMetric==='revenue'?'营收: <b>¥'+p[0].value.toLocaleString()+'</b>':'均价: <b>¥'+p[0].value+'</b>'))},
+    xAxis:{type:'category',data:cats,axisLabel:{color:'#7a8a9e',rotate:30},axisLine:{lineStyle:{color:'#2a3447'}},axisTick:{show:false}},
+    yAxis:{type:'value',axisLabel:{color:'#7a8a9e'},splitLine:{lineStyle:{color:'#1e2a3a',type:'dashed'}},axisLine:{show:false}},
+    series:[{type:'bar',data:chartData,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#9c7cff'},{offset:1,color:'#5a3fa0'}]),borderRadius:[3,3,0,0]},barWidth:30,
+      label:{show:true,formatter:p=>bcMetric==='count'?p.value:(bcMetric==='revenue'?'¥'+p.value.toLocaleString():'¥'+p.value),color:'#9c7cff',fontSize:10,position:'top'}}],
+    grid:{left:50,right:20,top:20,bottom:50}
+  });
+  const totalOrders = data.length;
+  const totalRev = data.reduce((s,d)=>s+(d.room_fee||0),0);
+  const totalRooms = data.reduce((s,d)=>s+(d.nights||1),0);
+  const avgPrice = totalRooms > 0 ? Math.round(totalRev/totalRooms) : 0;
+  const checkinCount = data.filter(d=>d.order_status==='checkin').length;
+  document.getElementById('bcSummary').innerHTML = `
+    <div class="bc-stat"><div class="bc-stat-val">${totalOrders}</div><div class="bc-stat-lbl">总订单</div></div>
+    <div class="bc-stat"><div class="bc-stat-val">${checkinCount}</div><div class="bc-stat-lbl">已入住</div></div>
+    <div class="bc-stat"><div class="bc-stat-val">${totalRooms}间夜·均价¥${avgPrice}</div><div class="bc-stat-lbl">总营收</div></div>`;
+}
+
+function populateOrderFilters() {
+  const data = SD.bookingCycleData || [];
+  const channels = [...new Set(data.map(d => d.channel))].sort();
+  const sel = document.getElementById('orderChannelFilter');
+  sel.innerHTML = '<option value="">全部渠道</option>' + channels.map(c => `<option value="${c}">${c}</option>`).join('');
+  renderOrders();
+}
+
+function renderOrders() {
+  let data = SD.bookingCycleData || [];
+  const dateFilter = document.getElementById('orderDateFilter').value;
+  const channelFilter = document.getElementById('orderChannelFilter').value;
+  const statusFilter = document.getElementById('orderStatusFilter').value;
+  const today = SD.today || new Date().toISOString().substring(0,10);
+  if (dateFilter === 'today') data = data.filter(d => d.checkin_date === today);
+  else if (dateFilter === '7d') { const t = new Date(today); const start = new Date(t); start.setDate(start.getDate()-6); const startStr = start.toISOString().substring(0,10); data = data.filter(d => d.checkin_date >= startStr && d.checkin_date <= today); }
+  if (channelFilter) data = data.filter(d => d.channel === channelFilter);
+  if (statusFilter) data = data.filter(d => d.order_status === statusFilter);
+  data.sort((a,b) => (b.book_at||'').localeCompare(a.book_at||''));
+  if (!data.length) { document.getElementById('orderContainer').innerHTML = '<div class="empty-state">暂无订单数据</div>'; return; }
+  let html = '<table class="order-table"><thead><tr><th>来单时间</th><th>入住日期</th><th>房型</th><th>渠道</th><th>房费</th><th>间夜</th><th>提前期</th><th>状态</th></tr></thead><tbody>';
+  data.forEach(o => {
+    const statusCls = o.order_status === 'checkin' ? 'checkin' : 'reserved';
+    const statusText = o.order_status === 'checkin' ? '已入住' : '已预订';
+    html += `<tr><td style="color:#dfe6ed;font-weight:500">${o.book_at||''}</td><td style="color:#c8a45c">${o.checkin_date||''}</td><td class="td-type">${o.room_type||''}</td><td class="td-channel">${o.channel||''}</td><td class="td-fee">${o.room_fee?'¥'+o.room_fee.toFixed(0):'—'}</td><td style="color:#5cb85c">${o.nights||1}</td><td style="color:#b8a0d8;font-size:12px">${o.lead_category||''}</td><td><span class="td-status ${statusCls}">${statusText}</span></td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('orderContainer').innerHTML = html;
+}
+
+window.addEventListener('resize', () => { Object.values(charts).forEach(c => c && c.resize()); });
+loadData();
+setInterval(loadData, 10 * 60 * 1000);
+</script>
+</body>
+</html>
