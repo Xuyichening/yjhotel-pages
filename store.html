@@ -431,15 +431,32 @@ function renderRooms() {
   const rooms = SD.rooms || [];
   if (!rooms.length) { document.getElementById('roomTable').innerHTML = '<tr><td colspan="99" class="empty-state">暂无房源数据</td></tr>'; return; }
   const d = selectedDayIdx;
-  const label = (SD.focusLabels||[])[d] || ('Day'+d);
   const date = (SD.focusDates||[])[d] || '';
-  document.getElementById('roomTitle').textContent = '房源详情 · ' + label + ' (' + date + ')';
-  let html = '<thead><tr><th>房型</th><th>分类</th><th>总房</th><th>已售</th><th>待售</th><th>入住率</th><th>已售均价</th><th>待售均价</th><th>营收</th><th>渠道</th>';
-  if(d===0) html += '<th>上周同期<span class="lw-tag">同比</span></th>';
-  html += '</tr></thead><tbody>';
+  document.getElementById('roomTitle').textContent = '门店房型详情 · ' + date.substring(5);
+
+  // 动态列标题
+  const dayOfWeek = date ? ['日','一','二','三','四','五','六'][new Date(date).getDay()] : '';
+  const lastYearDate = date ? (parseInt(date.substring(0,4))-1) + date.substring(4) : '';
+
+  let html = '<thead><tr><th>房型</th><th>类别</th><th>总间夜</th><th>已售间夜</th><th>待售间夜</th><th>入住率</th><th>已售均价</th><th>待售均价</th><th>上周' + dayOfWeek + '均价</th><th>环比</th><th>去年' + lastYearDate.substring(5) + '均价</th><th>同比</th><th>渠道</th></tr></thead><tbody>';
   rooms.forEach(r => {
     const occ = r['day'+d+'_occ_rate'];
     const cls = occClass(occ);
+    const soldAvg = r['day'+d+'_sold_avg'] || 0;
+    const availAvg = r['day'+d+'_available_avg'] || 0;
+    const lwAvg = r['day'+d+'_lw_sold_avg'] || 0;
+    const lyAvg = r['day'+d+'_ly_sold_avg'] || 0;
+
+    // 环比
+    const momChange = lwAvg > 0 ? Math.round((soldAvg - lwAvg) / lwAvg * 100) : null;
+    const momText = momChange !== null ? (momChange >= 0 ? '+' + momChange + '%' : momChange + '%') : '—';
+    const momCls = momChange !== null ? (momChange > 0 ? 'good' : momChange < 0 ? 'bad' : '') : '';
+
+    // 同比
+    const yoyChange = lyAvg > 0 ? Math.round((soldAvg - lyAvg) / lyAvg * 100) : null;
+    const yoyText = yoyChange !== null ? (yoyChange >= 0 ? '+' + yoyChange + '%' : yoyChange + '%') : '—';
+    const yoyCls = yoyChange !== null ? (yoyChange > 0 ? 'good' : yoyChange < 0 ? 'bad' : '') : '';
+
     html += `<tr>
       <td style="color:#ce93d8;text-align:left;font-weight:500">${r.name}</td>
       <td style="color:#b0bec5">${r.category||''}</td>
@@ -447,16 +464,14 @@ function renderRooms() {
       <td class="${cls}">${r['day'+d+'_sold']}</td>
       <td>${r['day'+d+'_available']}</td>
       <td class="${cls}">${occ}%</td>
-      <td style="color:#4fc3f7">¥${r['day'+d+'_sold_avg']||0}</td>
-      <td style="color:#8899aa">¥${r['day'+d+'_available_avg']||0}</td>
-      <td style="color:#ffd54f">${fmtRev(r['day'+d+'_revenue'])}</td>
-      <td style="font-size:11px;color:#81d4fa;max-width:200px;overflow:hidden;text-overflow:ellipsis">${r['day'+d+'_channels']||''}</td>`;
-    if(d===0) {
-      const lwAvg = r['day0_lw_sold_avg'];
-      const lyAvg = r['day0_ly_sold_avg'];
-      html += `<td style="font-size:12px">¥${lwAvg||0}${lyAvg?'<span class="lw-tag">去年¥'+lyAvg+'</span>':''}</td>`;
-    }
-    html += '</tr>';
+      <td style="color:#4fc3f7">¥${soldAvg}</td>
+      <td style="color:#8899aa">¥${availAvg}</td>
+      <td style="color:#b0bec5">${lwAvg ? '¥'+lwAvg : '—'}</td>
+      <td class="${momCls}">${momText}</td>
+      <td style="color:#b0bec5">${lyAvg ? '¥'+lyAvg : '—'}</td>
+      <td class="${yoyCls}">${yoyText}</td>
+      <td style="font-size:11px;color:#81d4fa;max-width:220px;overflow:hidden;text-overflow:ellipsis">${r['day'+d+'_channels']||''}</td>
+    </tr>`;
   });
   html += '</tbody>';
   document.getElementById('roomTable').innerHTML = html;
