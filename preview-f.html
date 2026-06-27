@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预览F · 深紫星空 - 首页</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#14101f;color:#e8e0f5;padding:20px;font-size:15px}
+
+.preview-banner{background:linear-gradient(90deg,#a78bfa,#a8873a);color:#14101f;text-align:center;padding:8px;font-weight:700;font-size:13px;position:sticky;top:0;z-index:999;border-radius:8px;margin-bottom:16px;letter-spacing:1px}
+
+/* 顶栏 */
+.header{background:linear-gradient(135deg,#1e1830 0%,#282240 100%);border-radius:12px;padding:20px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1px solid #2d2545}
+.header h1{font-size:21px;color:#e8e0f5;font-weight:600;letter-spacing:1px}
+.header h1 em{font-style:normal;color:#a78bfa}
+.header .meta{font-size:12px;color:#8a7ea6;text-align:right;line-height:1.8}
+.header .meta .time{color:#a78bfa;font-size:14px;font-weight:600}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#1e1830;border-radius:10px;padding:18px 16px;border:1px solid #2d2545;text-align:center;transition:border-color .2s}
+.kpi:hover{border-color:#3d3460}
+.kpi .val{font-size:30px;font-weight:700;color:#a78bfa;letter-spacing:0.5px}
+.kpi .val.green{color:#5cb890}.kpi .val.yellow{color:#d4a030}.kpi .val.red{color:#e05555}
+.kpi .lbl{font-size:12px;color:#8a7ea6;margin-top:5px;letter-spacing:0.5px}
+
+/* 区域 */
+.region-section{margin-bottom:20px}
+.region-title{font-size:15px;color:#a78bfa;margin-bottom:12px;padding-left:10px;border-left:3px solid #a78bfa;font-weight:600;letter-spacing:0.5px}
+
+/* 门店卡片 */
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.store-card{background:#1e1830;border-radius:10px;padding:16px 20px;border:1px solid #2d2545;cursor:pointer;transition:all .2s;text-decoration:none;display:block;color:#e8e0f5}
+.store-card:hover{border-color:#a78bfa;box-shadow:0 2px 16px rgba(167,139,250,0.08)}
+.store-card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.store-card .store-name{font-size:17px;font-weight:700;color:#e8e0f5}
+.store-card .store-type{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:500}
+.store-card .type-公寓{background:rgba(167,139,250,0.12);color:#a78bfa}
+.store-card .type-民宿{background:rgba(212,160,48,0.12);color:#d4a030}
+.store-card .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.store-card .metric{text-align:center}
+.store-card .metric .m-val{font-size:19px;font-weight:700}
+.store-card .metric .m-val.good{color:#5cb890}.store-card .metric .m-val.mid{color:#d4a030}.store-card .metric .m-val.bad{color:#e05555}
+.store-card .metric .m-lbl{font-size:10px;color:#8a7ea6;margin-top:2px}
+.store-card .arrow{color:#5a5070;font-size:14px;margin-top:8px;text-align:right}
+
+/* 趋势 */
+.trend-section{background:#1e1830;border-radius:10px;padding:20px;margin-bottom:20px;border:1px solid #2d2545}
+.trend-section h2{font-size:16px;color:#a78bfa;margin-bottom:12px;padding-left:10px;border-left:3px solid #a78bfa;font-weight:600}
+.chart-box{height:280px}
+
+.footer{text-align:center;color:#5a5070;font-size:11px;padding:12px;margin-top:8px;letter-spacing:0.5px}
+.refresh-hint{font-size:11px;color:#6a5e82;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="preview-banner">🎨 预览F · 深紫星空 — 深紫黑底 + 薰衣草紫强调 + 淡紫白文字</div>
+
+<div class="header">
+  <h1>🏨 扬际酒店 · <em>集团运营看板</em></h1>
+  <div class="meta">
+    <div class="time" id="collectTime">加载中...</div>
+    <div>数据来源：云掌柜PMS via bi.yjhotel.xyz</div>
+    <div class="refresh-hint" id="refreshHint"></div>
+  </div>
+</div>
+
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="trend-section">
+  <h2>30天入住率趋势（集团合计）</h2>
+  <div id="trendChart" class="chart-box"></div>
+</div>
+
+<div id="storeList"></div>
+
+<div class="footer">扬际酒店运营中心 · 经营动态看板</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+const NAME_MAP = { '白象街5店': '白象街旗舰店' };
+function displayName(name) { return NAME_MAP[name] || name; }
+let D = null;
+
+async function loadData() {
+  try {
+    const r = await fetch('data.json?t=' + Date.now());
+    D = await r.json();
+    renderAll();
+  } catch(e) {
+    document.getElementById('collectTime').textContent = '加载失败';
+    console.error(e);
+  }
+}
+
+function occClass(v) { return v > 70 ? 'good' : v > 50 ? 'mid' : 'bad'; }
+
+function renderAll() {
+  if (!D) return;
+  document.getElementById('collectTime').textContent = '数据采集: ' + D.collectTime;
+  document.getElementById('refreshHint').textContent = '页面数据为快照，刷新页面获取最新';
+
+  const totalRooms = D.totalRooms || D.storeMatrix.reduce((s,m) => s + m.day0_total, 0);
+  const totalOccupied = D.totalOccupied || D.storeMatrix.reduce((s,m) => s + m.day0_sold, 0);
+  const totalRevenue = D.totalRevenue || D.storeMatrix.reduce((s,m) => s + (m.day0_revenue||0), 0);
+  const groupOcc = D.groupOccupancy || (totalRooms > 0 ? Math.round(totalOccupied/totalRooms*1000)/10 : 0);
+  const groupAvg = D.groupAvgPrice || (totalOccupied > 0 ? Math.round(totalRevenue/totalOccupied) : 0);
+
+  const kpiHtml = [
+    { val: totalRooms, lbl: '集团总房量', cls: '' },
+    { val: totalOccupied, lbl: '今日已售间夜', cls: 'yellow' },
+    { val: groupOcc + '%', lbl: '今日入住率', cls: 'yellow' },
+    { val: '¥' + totalRevenue.toLocaleString('zh-CN',{maximumFractionDigits:0}), lbl: '今日总营收', cls: '' },
+    { val: '¥' + groupAvg, lbl: '集团均价', cls: '' }
+  ].map(k => `<div class="kpi"><div class="val ${k.cls}">${k.val}</div><div class="lbl">${k.lbl}</div></div>`).join('');
+  document.getElementById('kpiRow').innerHTML = kpiHtml;
+
+  renderTrend();
+
+  const regions = D.regionSummary || {};
+  const regionOrder = ['重庆','珠海','桂林'];
+  let html = '';
+  regionOrder.forEach(rg => {
+    if (!regions[rg]) return;
+    const rs = regions[rg];
+    const rgStores = D.storeMatrix.filter(s => s.region === rg);
+    html += `<div class="region-section">
+      <div class="region-title">${rg} · ${rs.rooms}间 | 已售${rs.sold}间 | ¥${(rs.revenue||0).toLocaleString('zh-CN',{maximumFractionDigits:0})}</div>
+      <div class="store-grid">
+        ${rgStores.map(s => renderCard(s)).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('storeList').innerHTML = html;
+}
+
+function renderCard(s) {
+  const cls = occClass(s.day0_occ);
+  const encName = encodeURIComponent(displayName(s.bi_name));
+  return `<a class="store-card" href="preview-store-f.html?name=${encName}">
+    <div class="card-top">
+      <span class="store-name">${displayName(s.bi_name)}</span>
+      <span class="store-type type-${s.type}">${s.type}</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="m-val ${cls}">${s.day0_occ}%</div><div class="m-lbl">入住率</div></div>
+      <div class="metric"><div class="m-val">${s.day0_sold}/${s.day0_total}</div><div class="m-lbl">已售/总房</div></div>
+      <div class="metric"><div class="m-val">¥${(s.day0_sold_avg||0)}</div><div class="m-lbl">已售均价</div></div>
+    </div>
+    <div class="arrow">查看详情 →</div>
+  </a>`;
+}
+
+function renderTrend() {
+  if (!D || !D.trendDates) return;
+  const chart = echarts.init(document.getElementById('trendChart'));
+  chart.setOption({
+    tooltip:{trigger:'axis',formatter:p=>p[0].name.replace(/\n/g,' ')+'<br/>入住率: <b>'+p[0].value+'%</b>',backgroundColor:'#1e1830',borderColor:'#2d2545',textStyle:{color:'#e8e0f5'}},
+    xAxis:{type:'category',data:D.trendDates,axisLabel:{color:'#8a7ea6',fontSize:11},axisLine:{lineStyle:{color:'#2d2545'}},axisTick:{show:false}},
+    yAxis:{type:'value',max:100,axisLabel:{color:'#8a7ea6',formatter:'{value}%',fontSize:11},splitLine:{lineStyle:{color:'#241e38',type:'dashed'}},axisLine:{show:false},axisTick:{show:false}},
+    series:[{type:'bar',data:D.trendRates,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#a78bfa'},{offset:1,color:'#7c5fc4'}]),borderRadius:[3,3,0,0]},barWidth:28,
+      label:{show:true,formatter:p=>p.value+'%',color:'#a78bfa',fontSize:10,position:'top'}}],
+    grid:{left:50,right:20,top:30,bottom:30}
+  });
+  window.addEventListener('resize',()=>chart.resize());
+}
+
+loadData();
+</script>
+</body>
+</html>
