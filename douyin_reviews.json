@@ -1,16 +1,16 @@
 {
   "total": 10,
-  "totalOnPlatform": "2428",
+  "totalOnPlatform": "2427",
   "store": "長夏江城·城市民宿",
   "city": "阳朔",
-  "scrapeTime": "2026-06-28T08:36:29.493988",
+  "scrapeTime": "2026-06-28T09:06:14.182312",
   "repliedThisRun": 0,
   "reviews": [
     {
       "index": 0,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "12小时前",
+      "publishTime": "13小时前",
       "content": "环境特别适合没有很吵闹 店长也特别好沟通",
       "isRatingOnly": false,
       "nickname": "C**6",
@@ -20,7 +20,7 @@
       "hasImage": false,
       "viewCount": "0人看过",
       "replyBtnText": "回复(1)",
-      "id": "dy_db23a83d5ade"
+      "id": "dy_72a10eca039f"
     },
     {
       "index": 1,
@@ -42,22 +42,6 @@
       "index": 2,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "21小时前",
-      "content": "房间干净卫生，前台小哥服务很热情，下次过来还会选择这家酒店。",
-      "isRatingOnly": false,
-      "nickname": "Arth.",
-      "spuName": "已消费🥔超值爆款【两居·1晚】伴手小礼+超清投影/液晶电视+自助洗衣",
-      "replyStatus": "已回复",
-      "merchantReply": "感谢您的五星好评！干净卫生是我们最基本的承诺，前台小哥的热情也是咱家的标配～下次来重庆，记得再来找我们，解放碑洪崖洞的夜景配上咱家温馨房间，绝配！期待您的再次光临❤️共1条回复删除",
-      "hasImage": true,
-      "viewCount": "22人看过",
-      "replyBtnText": "回复(1)",
-      "id": "dy_0ee484336195"
-    },
-    {
-      "index": 3,
-      "ratingText": "超赞",
-      "stars": 5,
       "publishTime": "2天前",
       "content": "🏡环境：非常好\\n🛋房型：很大\\n🛁设施：完好\\n🧡服务：前台的人很好\\n🚗交通：方便",
       "isRatingOnly": false,
@@ -66,12 +50,12 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～共1条回复删除",
       "hasImage": true,
-      "viewCount": "49人看过",
+      "viewCount": "50人看过",
       "replyBtnText": "回复(1)",
       "id": "dy_1c090b8f8f73"
     },
     {
-      "index": 4,
+      "index": 3,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "2天前",
@@ -82,12 +66,12 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这句“交通方便、环境优美、服务设施好，值得入住”也太让人开心了吧！😭❤️ 满意就好～咱家优点全被你发现啦！✨ 下次再来必须继续宠你，让你住得更舒心！冲鸭，等你哟～🏙️💕共1条回复删除",
       "hasImage": true,
-      "viewCount": "44人看过",
+      "viewCount": "45人看过",
       "replyBtnText": "回复(1)",
       "id": "dy_09e31bc2ad8e"
     },
     {
-      "index": 5,
+      "index": 4,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "3天前",
@@ -103,7 +87,7 @@
       "id": "dy_1a2cc32bc9fc"
     },
     {
-      "index": 6,
+      "index": 5,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "3天前",
@@ -119,7 +103,7 @@
       "id": "dy_1da6f4ad9747"
     },
     {
-      "index": 7,
+      "index": 6,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "3天前",
@@ -135,7 +119,7 @@
       "id": "dy_1da6f4ad9747"
     },
     {
-      "index": 8,
+      "index": 7,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "3天前",
@@ -151,7 +135,7 @@
       "id": "dy_1da6f4ad9747"
     },
     {
-      "index": 9,
+      "index": 8,
       "ratingText": "超赞",
       "stars": 5,
       "publishTime": "3天前",
@@ -165,6 +149,22 @@
       "viewCount": "53人看过",
       "replyBtnText": "回复(1)",
       "id": "dy_d18ab03043c6"
+    },
+    {
+      "index": 9,
+      "ratingText": "超赞",
+      "stars": 5,
+      "publishTime": "4天前",
+      "content": "🏡环境：非常不错\\n🛋房型：很干净 \\n🧡服务：特别热情\\n🏪周边：去哪里都方便",
+      "isRatingOnly": false,
+      "nickname": "冉冉",
+      "spuName": "已消费🍋福利放送【大床·1晚】城市夜景+管家服务+迎冬精选",
+      "replyStatus": "已回复",
+      "merchantReply": "宝子这条好评也太让人开心了吧！😭❤️ 环境好、房间干净、服务热情、去哪儿都方便～咱家优点全被你发现啦！✨ 你住得满意就是我们最大的动力，下次再来必须继续宠你！🏙️ 等你哟～🚠💕",
+      "hasImage": false,
+      "viewCount": "3人看过",
+      "replyBtnText": "回复(1)",
+      "id": "dy_5a8bb54be16c"
     }
   ]
 }
