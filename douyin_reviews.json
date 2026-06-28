@@ -3,7 +3,7 @@
   "totalOnPlatform": "2427",
   "store": "長夏江城·城市民宿",
   "city": "阳朔",
-  "scrapeTime": "2026-06-28T21:40:59.380614",
+  "scrapeTime": "2026-06-28T22:06:30.040157",
   "repliedThisRun": 0,
   "reviews": [
     {
@@ -50,7 +50,7 @@
       "replyStatus": "已回复",
       "merchantReply": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～共1条回复删除",
       "hasImage": true,
-      "viewCount": "55人看过",
+      "viewCount": "57人看过",
       "replyBtnText": "回复(1)",
       "id": "dy_0c36fd1a0894"
     },
@@ -90,7 +90,7 @@
       "index": 5,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "3天前",
+      "publishTime": "4天前",
       "content": "很不错",
       "isRatingOnly": false,
       "nickname": "hhjjhff",
@@ -100,13 +100,13 @@
       "hasImage": false,
       "viewCount": "1人看过",
       "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "id": "dy_6d7f2eb8c909"
     },
     {
       "index": 6,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "3天前",
+      "publishTime": "4天前",
       "content": "很不错",
       "isRatingOnly": false,
       "nickname": "hhjjhff",
@@ -116,13 +116,13 @@
       "hasImage": false,
       "viewCount": "0人看过",
       "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "id": "dy_6d7f2eb8c909"
     },
     {
       "index": 7,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "3天前",
+      "publishTime": "4天前",
       "content": "很不错",
       "isRatingOnly": false,
       "nickname": "hhjjhff",
@@ -132,7 +132,7 @@
       "hasImage": false,
       "viewCount": "0人看过",
       "replyBtnText": "回复(1)",
-      "id": "dy_1da6f4ad9747"
+      "id": "dy_6d7f2eb8c909"
     },
     {
       "index": 8,
@@ -154,7 +154,7 @@
       "index": 9,
       "ratingText": "超赞",
       "stars": 5,
-      "publishTime": "4天前",
+      "publishTime": "5天前",
       "content": "🏡环境：非常不错\\n🛋房型：很干净 \\n🧡服务：特别热情\\n🏪周边：去哪里都方便",
       "isRatingOnly": false,
       "nickname": "冉冉",
@@ -164,7 +164,7 @@
       "hasImage": false,
       "viewCount": "3人看过",
       "replyBtnText": "回复(1)",
-      "id": "dy_5a8bb54be16c"
+      "id": "dy_727a1800e2b7"
     }
   ]
 }
