@@ -610,6 +610,24 @@
         "fetched_at": "2026-06-27T14:17:20.983Z",
         "card_index": 1,
         "id": "ctrip_f1a5018a4cd6"
+      },
+      {
+        "platform": "ctrip",
+        "rating": 5,
+        "rating_text": "Perfect",
+        "has_images": false,
+        "content": "酒店不错的过来学习顺便玩一玩重庆太美了美食美景都不错的推荐",
+        "title": "",
+        "reviewer": "Guest User",
+        "room_type": "Elegant City-View Double Bed Room [Sky City-View, Panoramic Floor-to-Ceiling Windows, Custom Serta Mattress]",
+        "review_month": "Jun 2026",
+        "review_time": "Posted on: 17:58:56, Jun 28, 2026",
+        "reply_status": "replied",
+        "reply_content": "非常感谢您对访酒店的认可与分享！美食是旅行中不可或缺的体验，我们不断丰富菜品，让每位客人都能找到心仪的味道，我们持续优化服务流程和硬件设施，只为给每位客人带来更舒心的入住感受。期待成为您每次来重庆的首选，祝旅途平安！🌺",
+        "reply_time": "2026-06-28 18:17",
+        "fetched_at": "2026-06-28T10:17:12.361Z",
+        "card_index": 0,
+        "id": "ctrip_c79230366d78"
       }
     ],
     "qunar": [
