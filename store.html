@@ -859,7 +859,7 @@ function renderReviews() {
   if (!reviewData || Object.keys(reviewData).length === 0) { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  const platforms = Object.keys(reviewData);
+  const platforms = Object.keys(reviewData).filter(k => !k.endsWith('_stats'));
   if (!platforms.includes(currentReviewPlatform)) currentReviewPlatform = platforms[0];
 
   // 平台Tab（带条数）
