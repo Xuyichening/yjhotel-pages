@@ -1,146 +1,4 @@
 {
-  "阳朔店": {
-    "douyin": [
-      {
-        "id": "dy_c6_new",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": false,
-        "content": "环境特别适合没有很吵闹 店长也特别好沟通",
-        "reviewer": "C**6",
-        "review_time": "5小时前",
-        "reply_status": "replied",
-        "reply_content": "感谢您的五星好评！环境安静舒适是我们一直坚持的标准，店长和全体伙伴都很乐意为您服务～下次来重庆，记得再来解放碑找我们，洪崖洞夜景和咱家温馨房间等着您！❤️",
-        "spu": "已消费 超值爆款【两居·1晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_3235fb2bf9",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": false,
-        "content": "性价比高，挺不错",
-        "reviewer": "离垢.",
-        "review_time": "11小时前",
-        "reply_status": "replied",
-        "reply_content": "感谢您的好评！性价比是我们一直努力的方向，很高兴您觉得物超所值～期待下次再来重庆玩，解放碑和洪崖洞的美景还有咱家温馨的房间都在等您！❤️",
-        "spu": "已消费 星河入梦【两居·3晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_2e70306e72",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": true,
-        "content": "房间干净卫生，前台小哥服务很热情，下次过来还会选择这家酒店。",
-        "reviewer": "Arth.",
-        "review_time": "14小时前",
-        "reply_status": "replied",
-        "reply_content": "感谢您的五星好评！干净卫生是我们最基本的承诺，前台小哥的热情也是咱家的标配～下次来重庆，记得再来找我们，解放碑洪崖洞的夜景配上咱家温馨房间，绝配！期待您的再次光临❤️",
-        "spu": "已消费 超值爆款【两居·1晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_58c2ee5285",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": true,
-        "content": "环境：非常好\n房型：很大\n设施：完好\n服务：前台的人很好\n交通：方便",
-        "reviewer": "奇怪的文章^",
-        "review_time": "2天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～",
-        "spu": "",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_876b01c94e",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": true,
-        "content": "交通方便环境优美 服务设施好值得入住",
-        "reviewer": "xHxH",
-        "review_time": "2天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这句“交通方便、环境优美、服务设施好，值得入住”也太让人开心了吧！满意就好～咱家优点全被你发现啦！下次再来必须继续宠你，让你住得更舒心！等你哟～",
-        "spu": "",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_1a15fee1d9",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": true,
-        "content": "非常的不错，下次还会选择",
-        "reviewer": "嘟**4",
-        "review_time": "3天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这句“非常不错，下次还会选择”也太甜了吧！你满意我们就开心～下次再来必须继续宠你，给你安排得明明白白！等你哟～",
-        "spu": "",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_a26d32b6a6",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": false,
-        "content": "很不错",
-        "reviewer": "hhjjhff",
-        "review_time": "3天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
-        "spu": "已消费 星河入梦【两居·3晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_921eb1dd7d",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": false,
-        "content": "很不错",
-        "reviewer": "hhjjhff",
-        "review_time": "3天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
-        "spu": "已消费 人气爆款【两居·2晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_b8f3c2a1e4",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": false,
-        "content": "很不错",
-        "reviewer": "hhjjhff",
-        "review_time": "3天前",
-        "reply_status": "replied",
-        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
-        "spu": "已消费 超值爆款【两居·1晚】",
-        "fetched_at": "2026-06-28 01:10"
-      },
-      {
-        "id": "dy_d4e5f6a7b8",
-        "platform": "douyin",
-        "rating": 5,
-        "has_images": true,
-        "content": "还可以，下次还会选择，入住体验很好",
-        "reviewer": "我们都是小怪兽",
-        "review_time": "3天前",
-        "reply_status": "replied",
-        "reply_content": "尊敬的宾客，感谢您的认可与好评。您的一句“还可以”与“入住体验很好”是对我们最大的鼓励，尤其“下次还会选择”更让我们倍感温暖。我们会一如既往保持干净舒适的居住环境和热情周到的服务，期待您再次光临，为您带来更舒心的入住体验。",
-        "spu": "",
-        "fetched_at": "2026-06-28 01:10"
-      }
-    ],
-    "douyin_stats": {
-      "total_reviews": 2428,
-      "cumulative_positive_rate": "99.7%",
-      "cumulative_reply_rate": "100.0%",
-      "yesterday_new_reviews": 0,
-      "yesterday_new_negative": 0,
-      "updated_at": "2026-06-28 01:10"
-    }
-  },
   "访酒店": {
     "ctrip": [
       {
@@ -2040,5 +1898,147 @@
         "id": "zhixing_7070479555f0"
       }
     ]
+  },
+  "白象街4店": {
+    "douyin": [
+      {
+        "id": "dy_c6_new",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": false,
+        "content": "环境特别适合没有很吵闹 店长也特别好沟通",
+        "reviewer": "C**6",
+        "review_time": "5小时前",
+        "reply_status": "replied",
+        "reply_content": "感谢您的五星好评！环境安静舒适是我们一直坚持的标准，店长和全体伙伴都很乐意为您服务～下次来重庆，记得再来解放碑找我们，洪崖洞夜景和咱家温馨房间等着您！❤️",
+        "spu": "已消费 超值爆款【两居·1晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_3235fb2bf9",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": false,
+        "content": "性价比高，挺不错",
+        "reviewer": "离垢.",
+        "review_time": "11小时前",
+        "reply_status": "replied",
+        "reply_content": "感谢您的好评！性价比是我们一直努力的方向，很高兴您觉得物超所值～期待下次再来重庆玩，解放碑和洪崖洞的美景还有咱家温馨的房间都在等您！❤️",
+        "spu": "已消费 星河入梦【两居·3晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_2e70306e72",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": true,
+        "content": "房间干净卫生，前台小哥服务很热情，下次过来还会选择这家酒店。",
+        "reviewer": "Arth.",
+        "review_time": "14小时前",
+        "reply_status": "replied",
+        "reply_content": "感谢您的五星好评！干净卫生是我们最基本的承诺，前台小哥的热情也是咱家的标配～下次来重庆，记得再来找我们，解放碑洪崖洞的夜景配上咱家温馨房间，绝配！期待您的再次光临❤️",
+        "spu": "已消费 超值爆款【两居·1晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_58c2ee5285",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": true,
+        "content": "环境：非常好\n房型：很大\n设施：完好\n服务：前台的人很好\n交通：方便",
+        "reviewer": "奇怪的文章^",
+        "review_time": "2天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这条五星分类好评也太走心了吧！环境好、房间大、设施全、前台服务热情、交通方便，咱家优点全被你发现啦～你满意我们就放心啦！下次再来必须继续宠你，安排得明明白白！等你哟～",
+        "spu": "",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_876b01c94e",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": true,
+        "content": "交通方便环境优美 服务设施好值得入住",
+        "reviewer": "xHxH",
+        "review_time": "2天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这句“交通方便、环境优美、服务设施好，值得入住”也太让人开心了吧！满意就好～咱家优点全被你发现啦！下次再来必须继续宠你，让你住得更舒心！等你哟～",
+        "spu": "",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_1a15fee1d9",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": true,
+        "content": "非常的不错，下次还会选择",
+        "reviewer": "嘟**4",
+        "review_time": "3天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这句“非常不错，下次还会选择”也太甜了吧！你满意我们就开心～下次再来必须继续宠你，给你安排得明明白白！等你哟～",
+        "spu": "",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_a26d32b6a6",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": false,
+        "content": "很不错",
+        "reviewer": "hhjjhff",
+        "review_time": "3天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
+        "spu": "已消费 星河入梦【两居·3晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_921eb1dd7d",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": false,
+        "content": "很不错",
+        "reviewer": "hhjjhff",
+        "review_time": "3天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
+        "spu": "已消费 人气爆款【两居·2晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_b8f3c2a1e4",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": false,
+        "content": "很不错",
+        "reviewer": "hhjjhff",
+        "review_time": "3天前",
+        "reply_status": "replied",
+        "reply_content": "宝子这句“很不错”也太酷了吧！简单三个字，直接给我们加了满满动力～你满意我们就开心！下次再来必须继续宠你！等你哟～",
+        "spu": "已消费 超值爆款【两居·1晚】",
+        "fetched_at": "2026-06-28 01:10"
+      },
+      {
+        "id": "dy_d4e5f6a7b8",
+        "platform": "douyin",
+        "rating": 5,
+        "has_images": true,
+        "content": "还可以，下次还会选择，入住体验很好",
+        "reviewer": "我们都是小怪兽",
+        "review_time": "3天前",
+        "reply_status": "replied",
+        "reply_content": "尊敬的宾客，感谢您的认可与好评。您的一句“还可以”与“入住体验很好”是对我们最大的鼓励，尤其“下次还会选择”更让我们倍感温暖。我们会一如既往保持干净舒适的居住环境和热情周到的服务，期待您再次光临，为您带来更舒心的入住体验。",
+        "spu": "",
+        "fetched_at": "2026-06-28 01:10"
+      }
+    ],
+    "douyin_stats": {
+      "total_reviews": 2428,
+      "cumulative_positive_rate": "99.7%",
+      "cumulative_reply_rate": "100.0%",
+      "yesterday_new_reviews": 0,
+      "yesterday_new_negative": 0,
+      "updated_at": "2026-06-28 01:10"
+    }
   }
 }
